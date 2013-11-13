@@ -1,0 +1,13 @@
+{
+
+    "config": {
+
+        "vendor-dir": "app/sys/vendor",
+        "preferred-install": "dist"
+
+    },
+    "require": {
+
+        "php": ">=5.4"
+    }
+}
