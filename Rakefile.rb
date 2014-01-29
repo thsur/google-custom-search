@@ -2,43 +2,59 @@ require 'rake'
 
 # Installation & setup:
 #
+# $: rake init_dirs
 # $: rake get_composer
-# $: rake setup_laravel
+# $: rake get_laravel
+# $: rake init_angular
 
 task :default do
-    sh 'rake --tasks'
+  sh 'rake --tasks'
 end
 
 # Setup
 
-desc 'Install composer.'
+desc 'Setup directory structure.'
+task :init_dirs do
+  sh 'mkdir --parents bin dist src/storage src/sys src/public'
+end
+
+desc 'Install Composer.'
 task :get_composer do
   sh 'curl -sS https://getcomposer.org/installer | php'
 end
 
-desc 'Install laravel.'
+desc 'Install Laravel.'
 task :get_laravel do
-  sh 'git remote add laravel https://github.com/laravel/laravel.git'
-  sh 'git fetch laravel'
-  sh 'git --work-tree=src/app/sys merge laravel/master'
-  sh 'composer.phar --working-dir=src/app/sys install'
+  sh 'composer.phar --working-dir=src/ create-project laravel/laravel sys --prefer-dist'
+end
+
+desc 'Install Angular.'
+task :init_angular do
+  FileUtils.cd('src/public') do
+    sh 'yo angular'
+  end
 end
 
 # Package managers
 
-desc 'Update or install composer packages.'
+desc 'Update Composer packages.'
 task :update_composer do
   sh 'composer.phar update --no-dev'
 end
 
-desc 'Update gems with bundle'
+desc 'Update Bower packages.'
+task :update_gems do
+  sh 'bundle update --verbose'
+end
+
+desc 'Update Ruby gems.'
 task :update_gems do
   sh 'bundle update --verbose'
 end
 
 # Maintenance
 
-desc 'Backup everything inside and below current folder into backup.tar.gz.'
+desc 'Backup everything inside and below the current folder into backup.tar.gz.'
 task :backup do
 
   file = 'backup.tar.gz'

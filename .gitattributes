@@ -3,12 +3,9 @@
 # @see http://git-scm.com/docs/gitattributes#_checking-out_and_checking-in
 
 # Set default behaviour, in case users don't have core.autocrlf set.
-# * text=auto
 
-*.rb    eol=lf
-*.json  eol=lf
-bin/*   eol=lf
-src/*   eol=lf
+*        text=auto
+/bin/**  eol=lf
 
 # Explicitly declare text files we want to always be normalized and converted
 # to native line endings on checkout.
