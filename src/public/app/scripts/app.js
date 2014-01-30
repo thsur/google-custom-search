@@ -1,18 +1,37 @@
 'use strict';
 
-angular.module('publicApp', [
+// Alias to console.log()
+
+var log = (function (console) {
+
+    return (console && typeof console.log === "function") ?
+           function () { console.log.apply(console, arguments); } : function () {};
+
+})(window.console);
+
+/*---------------------------
+
+  Main
+
+---------------------------*/
+
+angular.module('site-main', [
+
   'ngCookies',
   'ngResource',
   'ngSanitize',
   'ngRoute'
-])
-  .config(['$routeProvider', function ($routeProvider) {
-    $routeProvider
-      .when('/', {
+]);
+
+angular.module('site-main').config(function ($routeProvider) {
+
+  $routeProvider
+    .when('/', {
+
         templateUrl: 'views/main.html',
         controller: 'MainCtrl'
-      })
-      .otherwise({
-        redirectTo: '/'
-      });
-  }]);
+    })
+    .otherwise({ redirectTo: '/' });
+});
+
+//angular.module('site-main').run(function($rootScope, User){});
