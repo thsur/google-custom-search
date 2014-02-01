@@ -15,23 +15,75 @@ var log = (function (console) {
 
 ---------------------------*/
 
-angular.module('site-main', [
+(function(){
 
-  'ngCookies',
-  'ngResource',
-  'ngSanitize',
-  'ngRoute'
-]);
+  var debug = true;
 
-angular.module('site-main').config(function ($routeProvider) {
+  // Manage module dependencies
 
-  $routeProvider
-    .when('/', {
+  var dependencies = {
 
-        templateUrl: 'views/main.html',
-        controller: 'MainCtrl'
-    })
-    .otherwise({ redirectTo: '/' });
-});
+    defaults: [
 
-//angular.module('site-main').run(function($rootScope, User){});
+      'ngCookies',
+      'ngResource',
+      'ngSanitize',
+      'ngRoute'
+    ],
+
+    init: function(){
+
+      this.app = this.defaults.concat(['services']); // Bind submodules here
+      return this;
+    }
+
+  }.init();
+
+  // Submodules
+
+  angular.module('services', []);
+
+  // Main module
+
+  angular.module('site-main', dependencies.app);
+
+  // Setup, performed on module loading
+
+  angular.module('site-main').config(function ($routeProvider) {
+
+    $routeProvider
+      .when('/', {
+
+          templateUrl: 'views/main.html',
+          controller: 'Main'
+      })
+      .when('/on-text', {
+
+          templateUrl: 'views/on-text.html',
+          controller: 'Main'
+      })
+      .otherwise({ redirectTo: '/' });
+
+  });
+
+  // Init, performed after module loading
+
+  angular.module('site-main').run(function ($rootScope, Server, Hud) {
+
+    if(!debug){
+
+      log = function(){};
+
+      if(console && typeof console.log === "function"){
+
+        console.log = log;
+      }
+
+      Hud.off();
+    }
+
+    Server.init({ endpoint: 'connect.php' });
+
+  });
+
+}());

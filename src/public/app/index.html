@@ -25,7 +25,25 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <div class="container" ng-view=""></div>
+    <div class="container" ng-cloak>
+
+        <header class="header">
+            <nav ng-controller="Nav">
+              <ul class="nav nav-pills pull-right">
+                <li ng-repeat="(url, entry) in nav" ><a ng-href="#{{url}}">{{entry}}</a></li>
+              </ul>
+            </nav>
+            <h1 class="text-muted">marke</h1>
+        </header>
+
+        <section class="main" ng-view=""></section>
+
+        <footer ng-controller="Footer">
+          <p class="copy">&copy; {{ date | date:'y' }} Megatron Footer</p>
+        </footer>
+    </div>
+
+    <hud></hud>
 
     <!--[if lt IE 9]>
     <script src="bower_components/es5-shim/es5-shim.js"></script>
@@ -47,6 +65,12 @@
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
     <script src="scripts/app.js"></script>
     <script src="scripts/controllers/main.js"></script>
+    <script src="scripts/controllers/footer.js"></script>
+    <script src="scripts/controllers/nav.js"></script>
+    <script src="scripts/services/server.js"></script>
+    <script src="scripts/services/stdLib.js"></script>
+    <script src="scripts/services/hud.js"></script>
+    <script src="scripts/directives/hud.js"></script>
     <!-- endbuild -->
 </body>
 </html>

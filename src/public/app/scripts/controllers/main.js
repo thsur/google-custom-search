@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('site-main').controller('MainCtrl', function ($scope){
+angular.module('site-main').controller('Main', function ($scope, Hud){
 
   $scope.awesomeThings = [
 
@@ -8,5 +8,4 @@ angular.module('site-main').controller('MainCtrl', function ($scope){
     'AngularJS',
     'Karma'
   ];
-
 });
