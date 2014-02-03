@@ -25,24 +25,35 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <div class="container" ng-cloak>
+    <div class="container" ng-controller="App" ng-cloak>
 
         <header class="header">
-            <nav ng-controller="Nav">
+            <nav x-nav data-level="0">
               <ul class="nav nav-pills pull-right">
-                <li ng-repeat="(url, entry) in nav" ><a ng-href="#{{url}}">{{entry}}</a></li>
+                <li ng-repeat="(num, entry) in nav.tree" ng-click="nav.setActive(num)" ng-class="{active: nav.isActive(num)}" >
+                    <a ng-href="#{{entry.url}}">{{entry.title}}</a>
+                </li>
               </ul>
             </nav>
             <h1 class="text-muted">marke</h1>
         </header>
 
-        <section class="main" ng-view=""></section>
+        <nav x-nav data-level="1">
+          <ul class="nav nav-pills">
+            <li ng-repeat="(num, entry) in nav.tree" ng-click="nav.setActive(num)" ng-class="{active: nav.isActive(num)}">
+                <a ng-href="#{{entry.url}}">{{entry.title}}</a>
+            </li>
+          </ul>
+        </nav>
+
+        <section class="main" ng-view></section>
 
         <footer ng-controller="Footer">
           <p class="copy">&copy; {{ date | date:'y' }} Megatron Footer</p>
         </footer>
     </div>
 
+    <!-- On-screen logger -->
     <hud></hud>
 
     <!--[if lt IE 9]>
@@ -53,6 +64,7 @@
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
     <script src="bower_components/jquery/jquery.js"></script>
+    <script src="bower_components/underscore/underscore.js"></script>
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/sass-bootstrap/dist/js/bootstrap.js"></script>
     <script src="bower_components/angular-resource/angular-resource.js"></script>
@@ -66,11 +78,13 @@
     <script src="scripts/app.js"></script>
     <script src="scripts/controllers/main.js"></script>
     <script src="scripts/controllers/footer.js"></script>
-    <script src="scripts/controllers/nav.js"></script>
+    <script src="scripts/services/nav.js"></script>
+    <script src="scripts/directives/nav.js"></script>
     <script src="scripts/services/server.js"></script>
     <script src="scripts/services/stdLib.js"></script>
     <script src="scripts/services/hud.js"></script>
     <script src="scripts/directives/hud.js"></script>
+    <script src="scripts/controllers/app.js"></script>
     <!-- endbuild -->
 </body>
 </html>

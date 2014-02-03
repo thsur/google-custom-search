@@ -1,3 +1,4 @@
+
 'use strict';
 
 angular.module('services').service('Hud', function Hud() {
@@ -15,8 +16,9 @@ angular.module('services').service('Hud', function Hud() {
 
     // We can't just replace the current
     // array with a new one, as this would
-    // destroy any outside binding to it
-    // (via fetchAll, see below).
+    // destroy all references and thus any
+    // outside binding to it (via fetchAll,
+    // see below).
     messages.splice(0, messages.length);
     return this;
   };

@@ -2,12 +2,19 @@
 
     "config": {
 
-        "vendor-dir": "src/sys/vendor",
-        "preferred-install": "dist"
-
+        "vendor-dir": "src/sys/vendor"
     },
     "require": {
 
-        "php": ">=5.4"
+        "php": ">=5.4",
+
+        "silex/silex": "~1.1",
+        "symfony/filesystem": "~2.3",
+        "symfony/finder": "~2.3",
+        "symfony/process": "~2.3",
+        "symfony/security": "~2.3",
+        "symfony/serializer": "~2.3",
+        "symfony/monolog-bridge": "~2.3",
+        "doctrine/dbal": ">=2.2.0,<2.4.0-dev"
     }
 }

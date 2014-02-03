@@ -1,17 +1,17 @@
 'use strict';
 
-describe('Controller: NavCtrl', function () {
+describe('Controller: AppCtrl', function () {
 
   // load the controller's module
   beforeEach(module('publicApp'));
 
-  var NavCtrl,
+  var AppCtrl,
     scope;
 
   // Initialize the controller and a mock scope
   beforeEach(inject(function ($controller, $rootScope) {
     scope = $rootScope.$new();
-    NavCtrl = $controller('NavCtrl', {
+    AppCtrl = $controller('AppCtrl', {
       $scope: scope
     });
   }));

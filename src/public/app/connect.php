@@ -1,8 +1,28 @@
 <?php
 
+define('__BASE__', __DIR__.'/../..');
+define('__SYS__', __BASE__.'/sys');
+define('__STORAGE__', __BASE__.'/storage');
+
 // Bootstrap
 
-require_once __DIR__.'/../../sys/vendor/autoload.php';
+require_once __BASE__.'/sys/vendor/autoload.php';
+
+// Helper
+
+function getJSON($file){
+
+    $data = __STORAGE__.'/'.$file;
+
+    if(!file_exists($data)){
+
+        return false;
+    }
+
+    return json_decode(file_get_contents($data));
+}
+
+// App
 
 $app = new Silex\Application();
 
@@ -15,11 +35,7 @@ if(true){
 
 $app->get('/resource/nav', function () use ($app) {
 
-    $data = array(
-
-        ''          => 'Home',
-        'on-text'   => 'Texten',
-    );
+    $data = getJSON('nav.json');
 
     if (!$data) {
 

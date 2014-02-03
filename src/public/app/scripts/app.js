@@ -68,7 +68,7 @@ var log = (function (console) {
 
   // Init, performed after module loading
 
-  angular.module('site-main').run(function ($rootScope, Server, Hud) {
+  angular.module('site-main').run(function ($rootScope, Server, Nav, Hud) {
 
     if(!debug){
 
@@ -82,8 +82,23 @@ var log = (function (console) {
       Hud.off();
     }
 
+    // Global config & registry
+
+    $rootScope.appConfig = {};
+
+    // Set server endpoint
+
     Server.init({ endpoint: 'connect.php' });
 
+    // Load nav
+
+    Server.get('/resource/nav', function (data) {
+
+      if(data){
+
+        Nav.init(data);
+      }
+    });
   });
 
 }());
