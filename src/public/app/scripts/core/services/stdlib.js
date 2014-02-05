@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('services').factory('stdLib', function () {
+angular.module('stdLib').factory('stdLib', function () {
 
   return {
 

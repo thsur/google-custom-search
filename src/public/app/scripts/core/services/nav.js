@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('navigation').service('Nav', function Nav() {
+angular.module('navigation').service('Nav', function Nav (Routes) {
 
   var config = {
 

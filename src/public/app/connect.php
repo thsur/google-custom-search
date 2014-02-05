@@ -14,28 +14,38 @@ use Symfony\Component\Yaml\Yaml;
 
 // Helper
 
+function getFileContents ($file) {
+
+    $file = __STORAGE__.'/'.$file;
+
+    if(file_exists($file)){
+
+        return file_get_contents($file);
+    }
+}
+
 function getJSON ($file) {
 
-    $data = __STORAGE__.'/'.$file;
+    $file = getFileContents($file);
 
-    if(!file_exists($data)){
+    if(!$file){
 
         return false;
     }
 
-    return json_decode(file_get_contents($data));
+    return json_decode($file);
 }
 
 function getYAML ($file) {
 
-    $data = __STORAGE__.'/'.$file;
+    $file = getFileContents($file);
 
-    if(!file_exists($data)){
+    if(!$file){
 
         return false;
     }
 
-    return Yaml::parse(file_get_contents($data));
+    return Yaml::parse($file);
 }
 
 function sendError ($message, $status = 404) {
@@ -66,17 +76,26 @@ $app->get('/resource/pages', function () use ($app) {
         return sendError('no data');
     }
 
+    // Flatten page tree & set ids and
+    // parent/child relations.
+
     $flat  = array();
     $queue = $pages;
 
+    $id    = 0;
+
     while(count($queue) > 0)
     {
-        $current = array_shift($queue);
+        $current       = array_shift($queue);
+        $current['id'] = $id;
+
+        $id++;
 
         if (isset($current['pages'])) {
 
             foreach ($current['pages'] as $value) {
 
+                $value['parent'] = $current['id'];
                 array_unshift($queue, $value);
             }
 
@@ -86,13 +105,7 @@ $app->get('/resource/pages', function () use ($app) {
         $flat[] = $current;
     }
 
-    $send = array(
-
-        'pages'  => $pages,
-        'routes' => $flat
-    );
-
-    return $app->json($send);
+    return $app->json($flat);
 });
 
 // Start dispatching

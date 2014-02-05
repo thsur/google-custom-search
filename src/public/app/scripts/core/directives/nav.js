@@ -27,6 +27,16 @@ angular.module('navigation').directive('nav', function (Nav) {
 
         Nav.setActive($scope.config.level, num);
       };
+
+      $scope.$on('$locationChangeSuccess', function() {
+
+
+        //Nav.setActive();
+        //getCurrentRoute();
+
+        //log(routes, $route.routes, $route, $location.path(), $location.url());
+      });
+
     },
     link: function (scope, element, attrs) {
 
@@ -36,6 +46,8 @@ angular.module('navigation').directive('nav', function (Nav) {
         log(rootline, Nav.getBranch(scope.config.level), scope.config.level);
         scope.tree = Nav.getBranch(scope.config.level);
       });
+
+
     }
   };
 });

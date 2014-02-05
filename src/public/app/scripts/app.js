@@ -31,30 +31,40 @@ var log = (function (console) {
       'ngRoute'
     ],
 
-    app: [
+    core: [
 
-      'services',
+      'stdLib',
       'server',
+      'routes',
       'navigation',
       'butterbar',
       'hud'
     ],
 
+    navigation: ['routes'],
+
     init: function () {
 
       // Load submodules
-      this.load(this.app);
+      this.load(this.core);
 
-      // Build dependencies
-      this.app = this.defaults.concat(this.app);
+      // Build core dependencies
+      this.core = this.defaults.concat(this.core);
       return this;
     },
 
     load: function (modules) {
 
+      var dependencies = [];
+
       for(var i = 0; i < modules.length; i++){
 
-        angular.module(modules[i], []);
+        if(this.hasOwnProperty(modules[i])){
+
+          dependencies = this[modules[i]];
+        }
+
+        angular.module(modules[i], dependencies);
       }
     }
 
@@ -62,11 +72,12 @@ var log = (function (console) {
 
   // Main module
 
-  angular.module('site-main', dependencies.app);
+  angular.module('site-main', dependencies.core);
 
   // Setup, performed on module loading
 
-  var routeProvider;
+  var routeProvider; // To set routes dynamically we need to keep a
+                     // reference to their provider.
 
   angular.module('site-main').config(function ($routeProvider) {
 
@@ -102,9 +113,9 @@ var log = (function (console) {
       if(data){
 
         Routes
-          .init(data.routes, routeProvider, default_controller);
+          .init(data, routeProvider, default_controller);
         Nav
-          .init(data.pages);
+          .init(data);
       }
     });
   });

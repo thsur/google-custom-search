@@ -15,6 +15,7 @@ angular.module('butterbar').directive('butterbar', function ($rootScope) {
 
           element.hide();
       });
+      $rootScope.$on('$routeChangeError', function() {});
     }
   }
 });
