@@ -9,6 +9,7 @@
         "php": ">=5.4",
 
         "silex/silex": "~1.1",
+        "symfony/yaml": "2.5.*@dev",
         "symfony/filesystem": "~2.3",
         "symfony/finder": "~2.3",
         "symfony/process": "~2.3",

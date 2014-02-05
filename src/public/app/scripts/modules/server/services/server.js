@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('services').factory('Server', function ($http, stdLib) {
+angular.module('server').factory('Server', function ($http, stdLib) {
 
   var config = {
 

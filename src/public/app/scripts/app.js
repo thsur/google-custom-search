@@ -31,17 +31,34 @@ var log = (function (console) {
       'ngRoute'
     ],
 
-    init: function(){
+    app: [
 
-      this.app = this.defaults.concat(['services']); // Bind submodules here
+      'services',
+      'server',
+      'navigation',
+      'butterbar',
+      'hud'
+    ],
+
+    init: function () {
+
+      // Load submodules
+      this.load(this.app);
+
+      // Build dependencies
+      this.app = this.defaults.concat(this.app);
       return this;
+    },
+
+    load: function (modules) {
+
+      for(var i = 0; i < modules.length; i++){
+
+        angular.module(modules[i], []);
+      }
     }
 
   }.init();
-
-  // Submodules
-
-  angular.module('services', []);
 
   // Main module
 
@@ -49,26 +66,16 @@ var log = (function (console) {
 
   // Setup, performed on module loading
 
+  var routeProvider;
+
   angular.module('site-main').config(function ($routeProvider) {
 
-    $routeProvider
-      .when('/', {
-
-          templateUrl: 'views/main.html',
-          controller: 'Main'
-      })
-      .when('/on-text', {
-
-          templateUrl: 'views/on-text.html',
-          controller: 'Main'
-      })
-      .otherwise({ redirectTo: '/' });
-
+    routeProvider = $routeProvider;
   });
 
   // Init, performed after module loading
 
-  angular.module('site-main').run(function ($rootScope, Server, Nav, Hud) {
+  angular.module('site-main').run(function ($route, $location, Server, Nav, Routes, Hud) {
 
     if(!debug){
 
@@ -82,21 +89,22 @@ var log = (function (console) {
       Hud.off();
     }
 
-    // Global config & registry
-
-    $rootScope.appConfig = {};
-
     // Set server endpoint
 
     Server.init({ endpoint: 'connect.php' });
 
-    // Load nav
+    // Load nav & routes
 
-    Server.get('/resource/nav', function (data) {
+    Server.get('/resource/pages', function (data) {
+
+      var default_controller = 'Main';
 
       if(data){
 
-        Nav.init(data);
+        Routes
+          .init(data.routes, routeProvider, default_controller);
+        Nav
+          .init(data.pages);
       }
     });
   });

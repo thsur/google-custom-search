@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('site-main').controller('Main', function ($scope, Hud){
+angular.module('site-main').controller('Main', function ($scope){
 
   $scope.awesomeThings = [
 

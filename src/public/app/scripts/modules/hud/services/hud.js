@@ -1,7 +1,7 @@
 
 'use strict';
 
-angular.module('services').service('Hud', function Hud() {
+angular.module('hud').service('Hud', function Hud() {
 
   var messages = [];
   var show     = true;

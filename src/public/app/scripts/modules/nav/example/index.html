@@ -27,15 +27,17 @@
     <!-- Add your site or application content here -->
     <div class="container" ng-controller="App" ng-cloak>
 
+        <!-- Three seperate navs -->
+
         <header class="header">
             <nav x-nav data-level="0">
-              <ul class="nav nav-pills">
+              <ul class="nav nav-pills pull-right">
                 <li ng-repeat="(num, entry) in tree" ng-click="setActive(num)" ng-class="{active: isActive(num)}" >
                     <a ng-href="#{{entry.url}}">{{entry.title}}</a>
                 </li>
               </ul>
             </nav>
-            <h1 class="text-muted">Gun for Hire</h1>
+            <h1 class="text-muted">marke</h1>
         </header>
 
         <nav x-nav data-level="1">
@@ -46,19 +48,37 @@
           </ul>
         </nav>
 
+        <nav x-nav data-level="2">
+          <ul class="nav nav-pills">
+            <li ng-repeat="(num, entry) in tree" ng-click="setActive(num)" ng-class="{active: isActive(num)}">
+                <a ng-href="#{{entry.url}}">{{entry.title}}</a>
+            </li>
+          </ul>
+        </nav>
 
-        <section class="main" ng-view ng-cloak></section>
+        <!-- Hierarchical nav -->
+
+        <nav x-nav data-level="0">
+          <ul class="nav nav-pills pull-right">
+            <li ng-repeat="(num, entry) in tree" ng-click="setActive(num)" ng-class="{active: isActive(num)}" >
+                <a ng-href="#{{entry.url}}">{{entry.title}}</a>
+                <ul x-nav data-level="1" ng-if="isActive(num)">
+                    <li ng-repeat="(num, entry) in tree" ng-click="setActive(num)" ng-class="{active: isActive(num)}" >
+                        <a ng-href="#{{entry.url}}">{{entry.title}}</a>
+                    </li>
+                </ul>
+            </li>
+          </ul>
+        </nav>
+
+        <section class="main" ng-view></section>
 
         <footer ng-controller="Footer">
-          <p class="copy">&copy; {{ date | date:'y' }} Storytellers &amp; Sons</p>
+          <p class="copy">&copy; {{ date | date:'y' }} Megatron Footer</p>
         </footer>
-
     </div>
 
-    <!-- When we're busy loading. Directive is a stub. No CSS attached. -->
-    <butterbar style="position: absolute; top: 10px;">Loading...</butterbar>
-
-    <!-- On-screen logger. No CSS attached. -->
+    <!-- On-screen logger -->
     <hud></hud>
 
     <!--[if lt IE 9]>
@@ -81,17 +101,15 @@
 
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
     <script src="scripts/app.js"></script>
-    <script src="scripts/services/stdLib.js"></script>
-    <script src="scripts/services/routes.js"></script>
-    <script src="scripts/controllers/app.js"></script>
     <script src="scripts/controllers/main.js"></script>
     <script src="scripts/controllers/footer.js"></script>
-    <script src="scripts/modules/server/services/server.js"></script>
-    <script src="scripts/modules/nav/directives/nav.js"></script>
-    <script src="scripts/modules/nav/services/nav.js"></script>
-    <script src="scripts/modules/hud/directives/hud.js"></script>
-    <script src="scripts/modules/hud/services/hud.js"></script>
-    <script src="scripts/modules/butterbar/directives/butterbar.js"></script>
+    <script src="scripts/services/nav.js"></script>
+    <script src="scripts/directives/nav.js"></script>
+    <script src="scripts/services/server.js"></script>
+    <script src="scripts/services/stdLib.js"></script>
+    <script src="scripts/services/hud.js"></script>
+    <script src="scripts/directives/hud.js"></script>
+    <script src="scripts/controllers/app.js"></script>
     <!-- endbuild -->
 </body>
 </html>

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('services').directive('hud', function (Hud) {
+angular.module('hud').directive('hud', function (Hud) {
 
   return {
     template: '<pre ng-repeat="message in info">{{message}}</pre>',
