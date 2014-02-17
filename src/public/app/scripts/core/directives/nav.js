@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('navigation').directive('nav', function (Nav) {
+angular.module('navigation').directive('nav', function (Nav, Routes) {
 
   return {
 
@@ -19,35 +19,18 @@ angular.module('navigation').directive('nav', function (Nav) {
 
         level: level
       };
-      $scope.isActive = function (num) {
 
-        return num === Nav.getActive($scope.config.level);
-      };
-      $scope.setActive = function (num) {
+      $scope.route = Routes.active;
 
-        Nav.setActive($scope.config.level, num);
-      };
+      $scope.$watchCollection('route', function(){
 
-      $scope.$on('$locationChangeSuccess', function() {
-
-
-        //Nav.setActive();
-        //getCurrentRoute();
-
-        //log(routes, $route.routes, $route, $location.path(), $location.url());
+        $scope.nav = Nav.getBranch($scope.config.level);
       });
 
+      $scope.isActive = function (id) {
+
+        return Nav.isActive(id);
+      };
     },
-    link: function (scope, element, attrs) {
-
-      scope.rootline = Nav.rootline;
-      scope.$watchCollection('rootline', function(rootline){
-
-        log(rootline, Nav.getBranch(scope.config.level), scope.config.level);
-        scope.tree = Nav.getBranch(scope.config.level);
-      });
-
-
-    }
-  };
+    link: function (scope, element, attrs) {} };
 });

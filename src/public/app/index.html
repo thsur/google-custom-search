@@ -9,15 +9,45 @@
     <title></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- @see https://developers.google.com/webfonts/docs/webfont_loader -->
+  <script type="text/javascript">
+
+        WebFontConfig = {
+            google: { families: [ 'Noto Sans', 'Roboto:300' ] }
+        };
+        (function(){
+
+            var wf   = document.createElement('script');
+            wf.src   = ('https:' == document.location.protocol ? 'https' : 'http') + '://ajax.googleapis.com/ajax/libs/webfont/1.1.1/webfont.js';
+            wf.type  = 'text/javascript';
+            wf.async = 'true';
+
+            var s    = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(wf,s);
+        })();
+    </script>
+
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
-    <link rel="stylesheet" href="bower_components/sass-bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
     <!-- endbower -->
     <!-- endbuild -->
+
     <!-- build:css({.tmp,app}) styles/main.css -->
-    <link rel="stylesheet" href="styles/main.css">
+    <!-- <link rel="stylesheet" href="styles/main.css"> -->
     <!-- endbuild -->
+
+    <!-- lesscss -->
+    <!-- Remove in build & switch to build notation above. -->
+    <link rel="stylesheet/less" type="text/css" href="styles/less/main.less" />
+    <script src="bower_components/less/dist/less-1.6.2.min.js"></script>
+    <!-- endless -->
+
   </head>
   <body ng-app="site-main">
     <!--[if lt IE 8]>
@@ -27,31 +57,30 @@
     <!-- Add your site or application content here -->
     <div class="container" ng-controller="App" ng-cloak>
 
-        <header class="header">
-            <nav x-nav data-level="0">
-              <ul class="nav nav-pills">
-                <li ng-repeat="(num, entry) in tree" ng-click="setActive(num)" ng-class="{active: isActive(num)}" >
-                    <a ng-href="#{{entry.url}}">{{entry.title}}</a>
-                </li>
-              </ul>
-            </nav>
-            <h1 class="text-muted">Gun for Hire</h1>
-        </header>
-
-        <nav x-nav data-level="1">
+      <header class="header">
+        <nav x-nav data-level="0">
           <ul class="nav nav-pills">
-            <li ng-repeat="(num, entry) in tree" ng-click="setActive(num)" ng-class="{active: isActive(num)}">
-                <a ng-href="#{{entry.url}}">{{entry.title}}</a>
+            <li ng-repeat="entry in nav" ng-class="{active: isActive(entry.id)}">
+              <a ng-href="#{{entry.url}}">{{entry.title}}</a>
             </li>
           </ul>
         </nav>
+        <h1 class="text-muted">A Gun for Hire</h1>
+      </header>
 
+      <nav x-nav data-level="1">
+        <ul class="nav nav-pills">
+          <li ng-repeat="entry in nav" ng-class="{active: isActive(entry.id)}">
+            <a ng-href="#{{entry.url}}">{{entry.title}}</a>
+          </li>
+        </ul>
+      </nav>
 
-        <section class="main" ng-view ng-cloak></section>
+      <section class="main" ng-view ng-cloak></section>
 
-        <footer ng-controller="Footer">
-          <p class="copy">&copy; {{ date | date:'y' }} Storytellers &amp; Sons</p>
-        </footer>
+      <footer ng-controller="Footer">
+        <p class="copy">&copy; {{ date | date:'y' }} Storytellers &amp; Sons</p>
+      </footer>
 
     </div>
 
@@ -69,13 +98,12 @@
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
     <script src="bower_components/jquery/jquery.js"></script>
-    <script src="bower_components/underscore/underscore.js"></script>
     <script src="bower_components/angular/angular.js"></script>
-    <script src="bower_components/sass-bootstrap/dist/js/bootstrap.js"></script>
     <script src="bower_components/angular-resource/angular-resource.js"></script>
     <script src="bower_components/angular-cookies/angular-cookies.js"></script>
     <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
     <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/underscore/underscore.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -84,6 +112,7 @@
     <script src="scripts/core/services/stdLib.js"></script>
     <script src="scripts/core/services/routes.js"></script>
     <script src="scripts/core/services/server.js"></script>
+    <script src="scripts/core/services/http-interceptor.js"></script>
     <script src="scripts/core/directives/nav.js"></script>
     <script src="scripts/core/services/nav.js"></script>
     <script src="scripts/core/directives/hud.js"></script>

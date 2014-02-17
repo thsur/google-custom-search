@@ -38,9 +38,12 @@ module.exports = function (grunt) {
         files: ['test/spec/{,*/}*.js'],
         tasks: ['newer:jshint:test', 'karma']
       },
-      compass: {
-        files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
-        tasks: ['compass:server', 'autoprefixer']
+      css: {
+        files: ['<%= yeoman.app %>/styles/{,*/}*.less'],
+        tasks: ['less:development'],
+        options: {
+          livereload: true,
+        }
       },
       gruntfile: {
         files: ['Gruntfile.js']
@@ -51,7 +54,7 @@ module.exports = function (grunt) {
         },
         files: [
           '<%= yeoman.app %>/{,*/}*.html',
-          '.tmp/styles/{,*/}*.css',
+          '<%= yeoman.app %>/styles/{,*/}*.css',
           '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
       }
@@ -132,9 +135,9 @@ module.exports = function (grunt) {
       dist: {
         files: [{
           expand: true,
-          cwd: '.tmp/styles/',
+          cwd: 'styles/',
           src: '{,*/}*.css',
-          dest: '.tmp/styles/'
+          dest: 'styles/'
         }]
       }
     },
@@ -147,35 +150,21 @@ module.exports = function (grunt) {
       }
     },
 
-
-
-
-    // Compiles Sass to CSS and generates necessary files if requested
-    compass: {
-      options: {
-        sassDir: '<%= yeoman.app %>/styles',
-        cssDir: '.tmp/styles',
-        generatedImagesDir: '.tmp/images/generated',
-        imagesDir: '<%= yeoman.app %>/images',
-        javascriptsDir: '<%= yeoman.app %>/scripts',
-        fontsDir: '<%= yeoman.app %>/styles/fonts',
-        importPath: '<%= yeoman.app %>/bower_components',
-        httpImagesPath: '/images',
-        httpGeneratedImagesPath: '/images/generated',
-        httpFontsPath: '/styles/fonts',
-        relativeAssets: false,
-        assetCacheBuster: false,
-        raw: 'Sass::Script::Number.precision = 10\n'
-      },
-      dist: {
+    // Compiles Less to CSS and generates necessary files if requested
+    less: {
+      development: {
         options: {
-          generatedImagesDir: '<%= yeoman.dist %>/images/generated'
-        }
-      },
-      server: {
-        options: {
-          debugInfo: true
-        }
+          paths: ['<%= yeoman.app %>/styles']
+        },
+        // @see http://gruntjs.com/configuring-tasks#files
+        // @see http://gruntjs.com/configuring-tasks#building-the-files-object-dynamically
+        files: [{
+          expand: true,
+          cwd: '<%= yeoman.app %>/styles/less',
+          src: ['{,*/}*.less'],
+          dest: '<%= yeoman.app %>/styles/',
+          ext: '.css'
+        }],
       }
     },
 
@@ -304,14 +293,7 @@ module.exports = function (grunt) {
 
     // Run some tasks in parallel to speed up the build process
     concurrent: {
-      server: [
-        'compass:server'
-      ],
-      test: [
-        'compass'
-      ],
       dist: [
-        'compass:dist',
         'imagemin',
         'svgmin'
       ]
@@ -361,8 +343,6 @@ module.exports = function (grunt) {
     grunt.task.run([
       'clean:server',
       'bower-install',
-      'concurrent:server',
-      'autoprefixer',
       'connect:livereload',
       'watch'
     ]);
@@ -376,6 +356,7 @@ module.exports = function (grunt) {
   grunt.registerTask('test', [
     'clean:server',
     'concurrent:test',
+    'less',
     'autoprefixer',
     'connect:test',
     'karma'
@@ -386,6 +367,7 @@ module.exports = function (grunt) {
     'bower-install',
     'useminPrepare',
     'concurrent:dist',
+    'less',
     'autoprefixer',
     'concat',
     'ngmin',

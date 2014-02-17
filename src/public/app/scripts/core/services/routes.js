@@ -4,8 +4,9 @@ angular.module('routes').service('Routes', function ($rootScope, $location, $rou
 
   var $routeProvider;
 
+  var active = {};
 
-  this.getCurrentRoute = function(){
+  var setActiveRoute = function(){
 
       var path   = $location.path();
       var routes = $route.routes;
@@ -18,10 +19,13 @@ angular.module('routes').service('Routes', function ($rootScope, $location, $rou
 
         if(match !== undefined && path.search(match) !== -1){
 
-          return routes[route].originalPath;
+          active.route = routes[route].originalPath;
+          return;
         }
       }
   };
+
+  this.active = active;
 
   this.init = function (routes, routeProvider, defaultController) {
 
@@ -68,5 +72,14 @@ angular.module('routes').service('Routes', function ($rootScope, $location, $rou
     // Trigger initial page load
 
     $route.reload();
+
+    // Listen to routes
+
+    setActiveRoute();
+
+    $rootScope.$on('$locationChangeSuccess', function() {
+
+      setActiveRoute();
+    });
   };
 });

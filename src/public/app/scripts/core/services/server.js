@@ -29,6 +29,7 @@ angular.module('server').factory('Server', function ($http, stdLib) {
 
     var url = this.url(query);
     var callback = angular.isFunction(callback) ? callback : function(){};
+    var _this = this;
 
     $http
       .get(url)
@@ -38,7 +39,7 @@ angular.module('server').factory('Server', function ($http, stdLib) {
       })
       .error(function (data, status, headers, config) {
 
-        this.errors.push({ query: query, url: url, result: arguments });
+        _this.errors.push({ query: query, url: url, result: arguments });
         callback(false);
       });
   }
@@ -47,6 +48,7 @@ angular.module('server').factory('Server', function ($http, stdLib) {
 
     var url = this.url(query);
     var callback = angular.isFunction(callback) ? callback : function(){};
+    var _this = this;
 
     $http
       .post(url)
@@ -56,7 +58,8 @@ angular.module('server').factory('Server', function ($http, stdLib) {
       })
       .error(function (data, status, headers, config) {
 
-        this.errors.push({ query: query, url: url, result: arguments });
+        _this.errors.push({ query: query, url: url, result: arguments });
+        log(_this.errors);
         callback(false);
       });
   }

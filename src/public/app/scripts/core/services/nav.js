@@ -2,111 +2,111 @@
 
 angular.module('navigation').service('Nav', function Nav (Routes) {
 
-  var config = {
+  var pages = [];
 
-    subpages_key: 'pages'
-  }
-
-  // Full tree
-
-  var tree = [];
-
-  // Which entry is active on which tree level.
+  // Which entries are active.
+  // Rootline depth corresponds to nav level (cf. getBranches()).
 
   var rootline = [];
-
-  // Check if a requested tree level is in the rootline.
-
-  var rootlineHasLevel = function (level) {
-
-    return (typeof rootline[level] !== 'undefined');
-  };
 
   // Alias to rootline to make it bindable
   // by the outside world.
 
   this.rootline = rootline;
 
+  // @protected
+
+  var getChildren = function (parent) {
+
+    parent = _.isNumber(parent) ? parent : null;
+
+    // Loops whole list. Refactor when list is large.
+    return _.filter(pages, function(page){
+
+      if(parent === null){
+
+        return !page.parent;
+      }
+
+      return page.parent === parent;
+    });
+  };
+
+  // @protected
+
+  var updateRootline = function () {
+
+    var active = Routes.active.route;
+    var queue  = [];
+
+    if(!active) return;
+
+    // Get all up to current active entry
+
+    var fillQueue = function () {
+
+      for(var i = 0, page; page = pages[i]; i++){
+
+        queue.push(page);
+
+        if(page.url === active || active === '/' && page.url === null){
+
+          return true;
+        }
+      }
+    };
+
+    if(!fillQueue()) return;
+
+    // Filter out siblings and stop at
+    // first top level entry found.
+
+    queue.reverse();
+
+    var _rootline = [queue[0].id];
+    var next      = queue[0].parent;
+    var i         = 1;
+
+    while(next && i < queue.length){
+
+      if(queue[i].id === next){
+
+        _rootline.push(next);
+        next = queue[i].parent;
+      }
+
+      i++;
+    }
+
+    rootline = _rootline.reverse();
+  };
+
   // Get a subtree.
 
   this.getBranch = function (level) {
 
-    if(!level || level == 0){
+    updateRootline(level);
 
-      return tree;
+    if(level === 0){
+
+      return getChildren();
     }
 
-    // Get children of active element, if any.
+    if(rootline[level-1]){
 
-    var branch   = tree;
-    var children = config.subpages_key;
-
-    for(var i = 0; i < level; i++){
-
-      var active = this.getActive(i);
-
-      if(!(branch[active] && branch[active][children])){
-
-        return [];
-      }
-
-      branch = branch[active][children];
+      return getChildren(rootline[level-1]);
     }
-
-    return branch;
   };
 
   // Get active entry index on given level.
 
-  this.getActive = function (level) {
+  this.isActive = function (id) {
 
-    return rootlineHasLevel(level) ? rootline[level] : null;
+    return _.indexOf(rootline, id) !== -1;
   };
 
-  this.setActive = function (level, num) {
+  this.init = function (nav) {
 
-    // Level not in rootline
-
-    if(!rootlineHasLevel(level)){
-
-      // Out of bounds check:
-      // Abort if level > (highest index + 1)
-
-      if(level > rootline.length) {
-
-        return;
-      }
-    }
-
-    // Entry index not in subtree
-
-    var tree = this.getBranch(level);
-
-    if(!tree || num >= tree.length){
-
-      return;
-    }
-
-    // Update rootline
-
-    rootline[level] = num;
-    rootline.splice(level + 1, rootline.length);
-  }
-
-  this.init = function (nav, user_config) {
-
-    if(config){
-
-      angular.extend(config, user_config);
-    }
-
-    // Merge own with given tree
-
-    angular.forEach(nav, function (item) { tree.push(item); });
-
-    // Set first entry on first level as active, thus
-    // initialising the rootline.
-
-    this.setActive(0,0);
+    pages = nav;
   };
 });

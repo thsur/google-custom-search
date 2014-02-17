@@ -38,7 +38,8 @@ var log = (function (console) {
       'routes',
       'navigation',
       'butterbar',
-      'hud'
+      'hud',
+      'httpInterceptor'
     ],
 
     navigation: ['routes'],
@@ -113,9 +114,9 @@ var log = (function (console) {
       if(data){
 
         Routes
-          .init(data, routeProvider, default_controller);
+          .init(data.routes, routeProvider, default_controller);
         Nav
-          .init(data);
+          .init(data.pages);
       }
     });
   });

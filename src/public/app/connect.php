@@ -65,9 +65,23 @@ if(true){
     $app['debug'] = true;
 }
 
-// Routes
+//
+// Core routes
+//
+
+// Login
+
+$app->get('/login', function () use ($app) {
+
+    $response = array('message' => 'login');
+    return $app->json($response);
+});
+
+// Page tree
 
 $app->get('/resource/pages', function () use ($app) {
+
+    //return sendError('no data', 401);
 
     $pages = getYAML('pages.yaml');
 
@@ -75,6 +89,8 @@ $app->get('/resource/pages', function () use ($app) {
 
         return sendError('no data');
     }
+
+    $pages = array_pop($pages);
 
     // Flatten page tree & set ids and
     // parent/child relations.
@@ -99,13 +115,38 @@ $app->get('/resource/pages', function () use ($app) {
                 array_unshift($queue, $value);
             }
 
+            $current['children'] = true;
             unset($current['pages']);
         }
 
         $flat[] = $current;
     }
 
-    return $app->json($flat);
+    // Prepare response
+
+    $send = array(
+
+        'pages'  => $flat,
+        'routes' => $flat,
+    );
+
+    // Tailor response
+
+    $filter = array_flip(array('id', 'title', 'url', 'parent', 'children'));
+
+    array_walk($send['pages'], function (&$entry) use ($filter) {
+
+        $entry = array_intersect_key($entry, $filter); // Set matching
+    });
+
+    $filter = array_flip(array('id', 'parent', 'children'));
+
+    array_walk($send['routes'], function (&$entry) use ($filter) {
+
+        $entry = array_diff_key($entry, $filter); // Remove matching
+    });
+
+    return $app->json($send);
 });
 
 // Start dispatching
