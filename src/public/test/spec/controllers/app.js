@@ -1,22 +1,27 @@
 'use strict';
 
-describe('Controller: AppCtrl', function () {
+describe('Controller: App', function () {
 
-  // load the controller's module
-  beforeEach(module('publicApp'));
+  beforeEach(module('app'));
 
-  var AppCtrl,
-    scope;
+  var App,
+      scope;
 
   // Initialize the controller and a mock scope
-  beforeEach(inject(function ($controller, $rootScope) {
-    scope = $rootScope.$new();
-    AppCtrl = $controller('AppCtrl', {
-      $scope: scope
-    });
-  }));
 
-  it('should attach a list of awesomeThings to the scope', function () {
-    expect(scope.awesomeThings.length).toBe(3);
+  beforeEach(
+    inject(function ($controller, $rootScope) {
+
+      scope = $rootScope.$new();
+      App   = $controller('App', {
+
+        $scope: scope
+      });
+    })
+  );
+
+  it('should do something', function () {
+
+    expect(scope.awesomeThings).toBeUndefined();
   });
 });

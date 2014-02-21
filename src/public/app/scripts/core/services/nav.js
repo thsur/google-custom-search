@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('navigation').service('Nav', function Nav (Routes) {
+angular.module('navigation').service('Nav', function Nav ($rootScope, Routes) {
 
   var pages = [];
 
@@ -8,11 +8,6 @@ angular.module('navigation').service('Nav', function Nav (Routes) {
   // Rootline depth corresponds to nav level (cf. getBranches()).
 
   var rootline = [];
-
-  // Alias to rootline to make it bindable
-  // by the outside world.
-
-  this.rootline = rootline;
 
   // @protected
 
@@ -38,6 +33,8 @@ angular.module('navigation').service('Nav', function Nav (Routes) {
 
     var active = Routes.active.route;
     var queue  = [];
+
+    rootline = []; // Clear/invalidate rootline
 
     if(!active) return;
 
@@ -81,13 +78,31 @@ angular.module('navigation').service('Nav', function Nav (Routes) {
     rootline = _rootline.reverse();
   };
 
-  // Get a subtree.
+  /**
+   * Get current rootline
+   */
 
-  this.getBranch = function (level) {
+  this.getRootline = function(){
 
-    updateRootline(level);
+    return rootline;
+  };
 
-    if(level === 0){
+  /**
+   * Get pages array
+   */
+
+  this.getPages = function(){
+
+    return pages;
+  };
+
+  /**
+   * Get a subtree by level
+   */
+
+  this.getByLevel = function (level) {
+
+    if(level === 0 || !level){ // Yes, it's the same, but still...
 
       return getChildren();
     }
@@ -96,17 +111,39 @@ angular.module('navigation').service('Nav', function Nav (Routes) {
 
       return getChildren(rootline[level-1]);
     }
+
+    return [];
   };
 
-  // Get active entry index on given level.
+  /**
+   * Get a subtree by parent page id
+   */
+
+  this.getById = function (id) {
+
+    return getChildren(id);
+  };
+
+  /**
+   * Get active entry index on given level
+   */
 
   this.isActive = function (id) {
 
     return _.indexOf(rootline, id) !== -1;
   };
 
+  /**
+   * Setup
+   */
+
   this.init = function (nav) {
 
-    pages = nav;
+    pages = angular.isArray(nav) ? nav : [];
+
+    $rootScope.$on('$locationChangeSuccess', function() {
+
+      updateRootline();
+    });
   };
 });

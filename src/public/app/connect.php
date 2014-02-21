@@ -81,7 +81,8 @@ $app->get('/login', function () use ($app) {
 
 $app->get('/resource/pages', function () use ($app) {
 
-    //return sendError('no data', 401);
+    return sendError('nope', 400);
+    //return sendError('nope', 401);
 
     $pages = getYAML('pages.yaml');
 

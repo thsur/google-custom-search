@@ -24,7 +24,7 @@ angular.module('navigation').directive('nav', function (Nav, Routes) {
 
       $scope.$watchCollection('route', function(){
 
-        $scope.nav = Nav.getBranch($scope.config.level);
+        $scope.nav = Nav.getByLevel($scope.config.level);
       });
 
       $scope.isActive = function (id) {

@@ -7,17 +7,19 @@ angular.module('butterbar').directive('butterbar', function ($rootScope) {
     restrict: 'E',
     link: function (scope, element, attrs) {
 
-      $rootScope.$on('$routeChangeStart', function (event, next, current) {
+      $rootScope.$on('$routeChangeStart', function (event, current, prev) {
 
+          log('$routeChangeStart');
           element.show();
       });
-      $rootScope.$on('$routeChangeSuccess', function (event, next, current) {
+      $rootScope.$on('$routeChangeSuccess', function (event, current, prev) {
 
+          log('$routeChangeSuccess');
           element.hide();
       });
-      $rootScope.$on('$routeChangeError', function (event, next, current) {
+      $rootScope.$on('$routeChangeError', function (event, current, prev) {
 
-          element.text('An error occured.');
+          log('$routeChangeError');
       });
     }
   }

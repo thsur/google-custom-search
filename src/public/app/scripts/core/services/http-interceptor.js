@@ -1,25 +1,18 @@
 'use strict;'
 
-angular.module('httpInterceptor').factory('httpInterceptor', function ($q) {
+angular.module('http').factory('HttpInterceptor', function ($q, $rootScope) {
 
   return {
 
-    response: function (response) {
-
-      log(response);
-      return $q.when(response); // Wrap response as promise
-    },
-
     responseError: function (response) {
 
-      log(response, $q);
-
-      return $q.reject(response);
+      $rootScope.$emit('HttpResponseError', response);
+      return $q.reject(false);
     }
   };
 });
 
-angular.module('httpInterceptor').config(function ($httpProvider) {
+angular.module('http').config(function ($httpProvider) {
 
-  $httpProvider.interceptors.push('httpInterceptor');
+  $httpProvider.interceptors.push('HttpInterceptor');
 });

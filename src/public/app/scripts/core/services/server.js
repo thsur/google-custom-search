@@ -1,87 +1,114 @@
 'use strict';
 
-angular.module('server').factory('Server', function ($http, stdLib) {
+/**
+ * Server module, though the name is slightly misleading:
+ * It's meant to talk to server, not being one.
+ *
+ * More or less a small wrapper around $http.
+ * See usage example below.
+ */
 
-  var config = {
+/*
 
-    endpoint: null
+// Configure
+
+Server.init({ endpoint: 'connect.php' });
+
+// Promise or callback
+
+Server
+  .get('/get/something')
+  .then(function (response) {
+
+    console.log('success', response);
+
+  }, function (response) {
+
+    console.log('error', response);
+  });
+
+Server.get('/get/something', function (response) {
+
+  console.log('success only', response);
+});
+
+*/
+
+angular.module('http').factory('Server', function ($http) {
+
+  var settings = {
+
+    // Server-side API endpoint
+    endpoint: '',
+
+    // $http default configuration settings
+    xhr: {}
   };
 
-  var Server = function(){
-
-    this.guid   = stdLib.guid();
-    this.errors = [];
-  };
+  var Server = function(){};
 
   var ext = Server.prototype = {};
 
+  /**
+   * Build an url.
+   */
+
   ext.url = function (query) {
 
-    if (query.charAt(0) !== '/'){
+    if (query.charAt(0) !== '/') {
 
       query = '/' + query;
     }
 
-    return config.endpoint + query;
-  }
+    return settings.endpoint + query;
+  };
+
+  /**
+   * Issue a request.
+   *
+   * @param {String}   query    - Most likely some path ('/get/something').
+   *                              Gets prepended with {@see settings.endpoint}.
+   * @param {Object}   config   - additional $http settings (optional)
+   * @param {Function} callback - to mimic callback-like behaviour
+   */
+
+  ext.xhr = function (query, config, callback) {
+
+    angular.extend(
+
+      config,
+      settings.xhr,
+      {url: this.url(query)}
+    );
+
+    if (angular.isFunction(callback)) {
+
+      return $http(config).then(callback);
+    }
+
+    return $http(config);
+  };
+
+  // Shortcut methods.
 
   ext.get = function (query, callback) {
 
-    var url = this.url(query);
-    var callback = angular.isFunction(callback) ? callback : function(){};
-    var _this = this;
+    return this.xhr(query, {method: 'GET'}, callback);
+  };
 
-    $http
-      .get(url)
-      .success(function (data, status, headers, config) {
+  ext.post = function (query, data, callback) {
 
-        callback.apply(callback, arguments);
-      })
-      .error(function (data, status, headers, config) {
-
-        _this.errors.push({ query: query, url: url, result: arguments });
-        callback(false);
-      });
-  }
-
-  ext.post = function (query, callback) {
-
-    var url = this.url(query);
-    var callback = angular.isFunction(callback) ? callback : function(){};
-    var _this = this;
-
-    $http
-      .post(url)
-      .success(function (data, status, headers, config) {
-
-        callback.apply(callback, arguments);
-      })
-      .error(function (data, status, headers, config) {
-
-        _this.errors.push({ query: query, url: url, result: arguments });
-        log(_this.errors);
-        callback(false);
-      });
-  }
-
-  ext.errors = function () {
-
-    return errors.length > 0 ? errors : false;
-  }
+    return this.xhr(query, {method: 'POST', data: data}, callback);
+  };
 
   // Public API
 
-  var server = new Server(); // Singleton for now
+  var server = new Server();
 
   return {
 
     get: function () { return server.get.apply(server, arguments); },
     post: function () { return server.post.apply(server, arguments); },
-    errors: function () { return server.errors.apply(server, arguments); },
-
-    init: function (user_config) {
-
-      angular.extend(config, user_config);
-    }
+    init: function (config) { angular.extend(settings, config); }
   };
 });

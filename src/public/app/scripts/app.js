@@ -34,12 +34,13 @@ var log = (function (console) {
     core: [
 
       'stdLib',
-      'server',
+      'http',
       'routes',
       'navigation',
       'butterbar',
       'hud',
-      'httpInterceptor'
+      'messages',
+      'errors'
     ],
 
     navigation: ['routes'],
@@ -73,21 +74,35 @@ var log = (function (console) {
 
   // Main module
 
-  angular.module('site-main', dependencies.core);
+  angular.module('app', dependencies.core);
 
   // Setup, performed on module loading
 
   var routeProvider; // To set routes dynamically we need to keep a
                      // reference to their provider.
 
-  angular.module('site-main').config(function ($routeProvider) {
+  angular.module('app').config(function ($routeProvider) {
 
     routeProvider = $routeProvider;
+
+    // Add core routes
+
+    $routeProvider
+      .when('/login', {
+
+        controller: 'Login',
+        templateUrl: 'views/partials/login.html'
+      })
+      .when('/error', {
+
+        templateUrl: 'views/partials/error.html',
+        controller: 'Error'
+      });
   });
 
   // Init, performed after module loading
 
-  angular.module('site-main').run(function ($route, $location, Server, Nav, Routes, Hud) {
+  angular.module('app').run(function ($route, $location, $q, Server, Nav, Routes, Hud) {
 
     if(!debug){
 
@@ -107,18 +122,20 @@ var log = (function (console) {
 
     // Load nav & routes
 
-    Server.get('/resource/pages', function (data) {
+    Server
+      .get('/resource/pages')
+      .then(function (response) {
 
-      var default_controller = 'Main';
+        var data = response.data || false;
 
-      if(data){
+        if(data){
 
-        Routes
-          .init(data.routes, routeProvider, default_controller);
-        Nav
-          .init(data.pages);
-      }
-    });
+          Routes
+            .init(data.routes, routeProvider, 'Main'); // 'Main' being the default
+                                                       // controller for all routes.
+          Nav
+            .init(data.pages);
+        }
+      });
   });
-
 }());

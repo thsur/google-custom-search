@@ -1,11 +1,7 @@
 'use strict';
 
-angular.module('site-main').controller('Main', function ($scope){
-
-  $scope.awesomeThings = [
-
-    'HTML5 Boilerplate',
-    'AngularJS',
-    'Karma'
-  ];
-});
+/**
+ * Default content controller
+ * Stub
+ */
+angular.module('app').controller('Main', function ($scope){});
