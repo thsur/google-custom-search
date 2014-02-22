@@ -11,31 +11,43 @@
 
 describe('Service: Server', function () {
 
-  // Load module
-
-  beforeEach(module('http'));
-
-  // Mock interceptor (i.e.: replace it)
-
-  angular.module('http').factory('HttpInterceptor', function ($q) {
-
-    return {
-      responseError: function (response) { return $q.reject(response); }
-    };
-  });
-
-  // Setup & Teardown
+  // Setup
 
   var Server,
-      $httpBackend;
+      $httpBackend,
+      $httpProvider,
+      $q;
 
-  beforeEach(
-    inject(function (_Server_, _$httpBackend_) {
+  beforeEach(function () {
 
-      Server       = _Server_;
-      $httpBackend = _$httpBackend_;
-    })
-  );
+    module('http');
+
+    // Mock interceptor
+
+    module(function (_$httpProvider_) {
+
+      $httpProvider = _$httpProvider_;
+
+      $httpProvider.interceptors.pop();
+      $httpProvider.interceptors.push(function ($q) {
+
+        return {
+          responseError: function (response) {
+
+            return $q.reject(response);
+          }
+        };
+      });
+    });
+
+    inject(function (_Server_, _$httpBackend_, _$q_) {
+
+        Server       = _Server_;
+        $httpBackend = _$httpBackend_;
+        $q = _$q_;
+
+    });
+  });
 
   afterEach(function() {
 
@@ -85,13 +97,13 @@ describe('Service: Server', function () {
 
     $httpBackend
       .expectGET('/something')
-      .respond(404);
+      .respond(400);
 
     Server
       .get('/something')
       .catch(function (response) {
 
-        expect(response.status).toBe(404);
+        expect(response.status).toBe(400);
       });
 
     $httpBackend.flush();

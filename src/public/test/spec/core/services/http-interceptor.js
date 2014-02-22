@@ -9,41 +9,16 @@ describe('Service: HttpInterceptor', function () {
 
   var $httpProvider;
 
-  /*
-  beforeEach(module('http', function ($httpProvider) {
-
-    httpProvider = $httpProvider;
-  }));
-  */
-  /*
-  beforeEach(module(function($provide) {
-
-    //$provide.provider('$http', $httpProvider);
-  }));
-  */
-
-  /*
-  beforeEach(module('http', function($httpProvider) {
-
-    $httpProvider.interceptors.push('HttpInterceptor');
-  }));
-  */
-
-  beforeEach(module('http'));
-
   beforeEach(function () {
 
-    module(function ($provide, $httpProvider) {
+    module('http');
 
-       $provide.provider('$http', $httpProvider);
-    });
-
+    // How to bind a provider, if needed.
+    // @see angular docs - AUTO.$provide
+    // @see http://stackoverflow.com/a/19301714/3323348
     module(function(_$httpProvider_) {
 
       $httpProvider = _$httpProvider_;
-      // Configure eventTracker provider
-      console.log('#####', _$httpProvider_, httpProvider);
-      //eventTrackerProvider.setTrackingUrl('/custom-track');
     });
 
     inject(function (_HttpInterceptor_, _$http_, _$httpBackend_, _$rootScope_) {
@@ -52,21 +27,21 @@ describe('Service: HttpInterceptor', function () {
       $http           = _$http_;
       $httpBackend    = _$httpBackend_;
       $rootScope      = _$rootScope_;
-
     });
   });
 
-  /*
   afterEach(function() {
 
     $httpBackend.verifyNoOutstandingExpectation();
     $httpBackend.verifyNoOutstandingRequest();
   });
-  */
+
+  it('should be set as interceptor in the http service provider', function () {
+
+    expect($httpProvider.interceptors).toContain('HttpInterceptor');
+  });
 
   it('should reject an erroneous response and issue a message', function () {
-
-    log($httpProvider.interceptors);
 
     spyOn(HttpInterceptor, 'responseError').and.callThrough();
 
@@ -78,14 +53,25 @@ describe('Service: HttpInterceptor', function () {
       .get('/')
       .catch(function (response) {
 
-        log('Msg from interceptor is:', response);
+        expect(response.status).toBe(400);
       });
 
-    //log('Interceptor is', HttpInterceptor);
-    //HttpInterceptor.responseError();
-
-    //expect(HttpInterceptor.responseError).toHaveBeenCalled();
     $httpBackend.flush();
+    expect(HttpInterceptor.responseError).toHaveBeenCalled();
   });
 
+  it('should emit an error event', function () {
+
+    spyOn($rootScope, '$emit').and.callThrough();
+
+    $httpBackend
+      .expectGET('/')
+      .respond(400);
+    $http
+      .get('/')
+    $httpBackend
+      .flush();
+
+    expect($rootScope.$emit).toHaveBeenCalledWith('HttpResponseError', jasmine.any(Object));
+  });
 });

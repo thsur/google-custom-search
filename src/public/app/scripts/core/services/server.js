@@ -6,6 +6,9 @@
  *
  * More or less a small wrapper around $http.
  * See usage example below.
+ *
+ * @todo Refactor to a provider for more isolated configuration
+ * @see  https://github.com/angular/angular.js/wiki/Understanding-Dependency-Injection
  */
 
 /*
@@ -14,7 +17,7 @@
 
 Server.init({ endpoint: 'connect.php' });
 
-// Promise or callback
+// Returns a promise (the one build up by $http)
 
 Server
   .get('/get/something')
@@ -26,6 +29,8 @@ Server
 
     console.log('error', response);
   });
+
+// Callback-style
 
 Server.get('/get/something', function (response) {
 

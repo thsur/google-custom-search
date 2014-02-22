@@ -7,7 +7,7 @@ angular.module('http').factory('HttpInterceptor', function ($q, $rootScope) {
     responseError: function (response) {
 
       $rootScope.$emit('HttpResponseError', response);
-      return $q.reject(false);
+      return $q.reject(response);
     }
   };
 });

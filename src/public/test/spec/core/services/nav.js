@@ -2,11 +2,9 @@
 
 describe('Service: Nav', function () {
 
-  beforeEach(module('navigation'));
-
   // Mock Routes service
 
-  angular.module('routes').service('Routes', function($rootScope){
+  angular.module('routesMock', []).service('Routes', function($rootScope){
 
     this.active = {};
     this.setActive = function (route) {
@@ -15,6 +13,9 @@ describe('Service: Nav', function () {
       $rootScope.$emit('$locationChangeSuccess');
     };
   });
+
+  beforeEach(module('navigation'));
+  beforeEach(module('routesMock'));
 
   // Setup
 
