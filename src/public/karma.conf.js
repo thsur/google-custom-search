@@ -1,7 +1,38 @@
 // Karma configuration
 // http://karma-runner.github.io/0.10/config/configuration-file.html
 
-module.exports = function(config) {
+module.exports = function(config, type) {
+
+  var files = [];
+
+  switch (type) {
+
+    // Using matsko's midway tester
+    // @see https://github.com/yearofmoo/ngMidwayTester
+    case 'midway':
+      files = files.concat([
+
+        // Tester deps & requirements
+        'mocha.conf.js',
+        'node_modules/chai/chai.js',
+        'test/lib/chai-should.js',
+        'test/lib/chai-expect.js',
+
+        // Tester
+        'node_modules/ng-midway-tester/src/ngMidwayTester.js',
+
+        // Tests
+        'test/midway/**/*.js'
+      ]);
+      break;
+
+    default:
+      files = files.concat([
+        'test/spec/**/*.js'
+      ]);
+      break;
+  };
+
   config.set({
     // base path, that will be used to resolve files and exclude
     basePath: '',
@@ -11,6 +42,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      'app/bower_components/jquery/jquery.js',
       'app/bower_components/angular/angular.js',
       'app/bower_components/angular-mocks/angular-mocks.js',
       'app/bower_components/angular-resource/angular-resource.js',
@@ -20,19 +52,18 @@ module.exports = function(config) {
       'app/bower_components/underscore/underscore.js',
       'app/scripts/*.js',
       'app/scripts/**/*.js',
-      'test/mock/**/*.js',
-      'test/spec/**/*.js'
-    ],
+      'test/mock/**/*.js'
+    ].concat(files),
 
     // list of files / patterns to exclude
     exclude: [],
 
     // web server port
-    port: 8080,
+    port: 80,
 
     // level of logging
     // possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
-    logLevel: config.LOG_DISABLE,
+    logLevel: config.LOG_INFO,
 
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: false,

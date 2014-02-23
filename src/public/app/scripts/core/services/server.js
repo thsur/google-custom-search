@@ -2,9 +2,9 @@
 
 /**
  * Server module, though the name is slightly misleading:
- * It's meant to talk to server, not being one.
+ * It's meant to talk to a server, not being one.
  *
- * More or less a small wrapper around $http.
+ * Small wrapper around $http.
  * See usage example below.
  *
  * @todo Refactor to a provider for more isolated configuration

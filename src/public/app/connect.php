@@ -75,14 +75,13 @@ $app->get('/login', function () use ($app) {
 
     $response = array('message' => 'login');
     return $app->json($response);
+    //return sendError('nope', 400);
+    //return sendError('nope', 401);
 });
 
 // Page tree
 
 $app->get('/resource/pages', function () use ($app) {
-
-    return sendError('nope', 400);
-    //return sendError('nope', 401);
 
     $pages = getYAML('pages.yaml');
 

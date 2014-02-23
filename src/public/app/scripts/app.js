@@ -97,12 +97,13 @@ var log = (function (console) {
 
         templateUrl: 'views/partials/error.html',
         controller: 'Error'
-      });
+      })
+      .otherwise({ redirectTo: '/error' });
   });
 
   // Init, performed after module loading
 
-  angular.module('app').run(function ($route, $location, $q, Server, Nav, Routes, Hud) {
+  angular.module('app').run(function (Server, Nav, Routes, Hud) {
 
     if(!debug){
 

@@ -27,7 +27,12 @@ angular.module('routes').service('Routes', function ($rootScope, $location, $rou
 
   this.active = active;
 
-  this.init = function (routes, routeProvider, defaultController) {
+  this.getRoutes = function () {
+
+    return $route.routes;
+  }
+
+  this.init = function (routes, routeProvider, defaultController, otherwiseRoute) {
 
     if($routeProvider){
 
@@ -38,33 +43,33 @@ angular.module('routes').service('Routes', function ($rootScope, $location, $rou
 
     // Set routes
 
-    for(var i = 0, k = routes.length, current; i < k; i++ ){
+    for(var i = 0, k = routes.length, route; i < k; i++ ){
 
-      current = routes[i];
+      route = routes[i];
 
-      if(current.hasOwnProperty('url')){
+      if(route.hasOwnProperty('url')){
 
-        if(!current.url){
+        if(!route.url){
 
-          current.url =  '/';
+          route.url =  '/';
         }
 
-        if(!current.controller){
+        if(!route.controller){
 
-          current.controller = defaultController;
+          route.controller = defaultController;
         }
 
-        $routeProvider.when(current.url, {
+        $routeProvider.when(route.url, {
 
-          templateUrl: current.view,
-          controller: current.controller
+          templateUrl: route.view,
+          controller: route.controller
         });
 
-        // Make first route the default one
+        // Set default route
 
-        if(i == 0){
+        if(otherwiseRoute && otherwiseRoute === route.url){
 
-          $routeProvider.otherwise({ redirectTo: current.url });
+          $routeProvider.otherwise({ redirectTo: route.url });
         }
       }
     }
