@@ -27,6 +27,16 @@ angular.module('app').controller('App', function ($rootScope, $scope, $route, $l
       }
 
       $location.path('/error');
+    }),
+
+    $rootScope.$on('$routeChangeStart', function (event, current, prev) {
+
+      if (current.redirectTo && current.redirectTo === '/error') {
+
+        Errors.push({status: 404});
+        $location.path('/error');
+        return;
+      }
     })
   ];
 

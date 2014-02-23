@@ -9,17 +9,15 @@ angular.module('butterbar').directive('butterbar', function ($rootScope) {
 
       $rootScope.$on('$routeChangeStart', function (event, current, prev) {
 
-          log('$routeChangeStart');
           element.show();
       });
       $rootScope.$on('$routeChangeSuccess', function (event, current, prev) {
 
-          log('$routeChangeSuccess');
           element.hide();
       });
       $rootScope.$on('$routeChangeError', function (event, current, prev) {
 
-          log('$routeChangeError');
+          element.hide();
       });
     }
   }

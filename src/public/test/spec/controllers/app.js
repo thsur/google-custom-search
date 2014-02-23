@@ -5,22 +5,15 @@ describe('Controller: App', function () {
   beforeEach(module('app'));
 
   var App,
-      scope;
+      Errors;
 
-  var subscriptions = [];
+  var scope,
+      $rootScope;
 
   beforeEach(
-    inject(function ($controller, $rootScope) {
+    inject(function ($controller, _$rootScope_, _Errors_) {
 
-      // Collect all subscriptions to top level events
-
-      spyOn($rootScope, '$on').and.callFake(function () {
-
-        var subscription = $rootScope.$on.calls.allArgs().pop();
-        var name = subscription[0];
-
-        subscriptions.push(name);
-      });
+      $rootScope = _$rootScope_;
 
       // Initialize the controller and a mock scope
 
@@ -29,16 +22,17 @@ describe('Controller: App', function () {
 
         $scope: scope
       });
+
+      Errors = _Errors_;
     })
   );
 
-  it('should listen to all kinds of top level events', function () {
+  describe("Dispatches error events", function () {
 
-    var expected = [
-      'HttpResponseError',
-      '$destroy'
-    ];
+    it('should register errors to a central service when an error event occurs', function () {
 
-    expect(subscriptions).toEqual(expected);
+      $rootScope.$emit('HttpResponseError', {status: 'mock-me'});
+      log(Errors.getErrors());
+    });
   });
 });

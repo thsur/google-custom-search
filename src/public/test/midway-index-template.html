@@ -1,0 +1,49 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body ng-app="app">
+
+    <div class="container" ng-controller="App" ng-cloak>
+
+      <header class="header">
+        <nav x-nav data-level="0">
+          <ul class="nav nav-pills">
+            <li ng-repeat="entry in nav" ng-class="{active: isActive(entry.id)}">
+              <a ng-href="#{{entry.url}}">{{entry.title}}</a>
+            </li>
+          </ul>
+        </nav>
+        <h1 class="text-muted"></h1>
+      </header>
+
+      <nav x-nav data-level="1">
+        <ul class="nav nav-pills">
+          <li ng-repeat="entry in nav" ng-class="{active: isActive(entry.id)}">
+            <a ng-href="#{{entry.url}}">{{entry.title}}</a>
+          </li>
+        </ul>
+      </nav>
+
+      <section class="main" ng-view ng-cloak></section>
+
+    </div>
+
+    <!-- When we're busy loading. Directive is a stub. No CSS attached. -->
+    <butterbar>Loading...</butterbar>
+
+    <!-- On-screen logger. No CSS attached. -->
+    <hud></hud>
+</body>
+</html>

@@ -7,7 +7,7 @@ angular.module('app').controller('Error', function ($scope, Errors) {
 
   if (!last) {
 
-    return;
+     return;
   }
 
   $scope.error = {

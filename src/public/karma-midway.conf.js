@@ -1,6 +1,7 @@
 
 var defaultConfig = require('./karma.conf.js');
-var baseUrl = 'http://localhost:80/_rn.de/src/public/app/';
+var baseUrl       = 'http://localhost:80/_rn.de/src/public/app/';
+var testIndexUrl  = 'http://localhost:80/_rn.de/src/public/test/';
 
 module.exports = function(config) {
 
@@ -11,6 +12,7 @@ module.exports = function(config) {
 
   config.proxies = {
 
-    '/': baseUrl
+    '/': baseUrl,
+    '/test/': testIndexUrl
   };
 };

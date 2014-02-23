@@ -50,10 +50,9 @@ describe('Service: Routes', function () {
     expect(_.size(routes)).toBeGreaterThan(0);
   });
 
-  it('adds routes', function () {
+  it('adds dynamically defined routes to preconfigured ones', function () {
 
     var routes = Routes.getRoutes();
-    var found  = 0;
 
     // All dynamically set routes defined
 
@@ -66,10 +65,10 @@ describe('Service: Routes', function () {
 
     expect(routes['/flowers']).toBeDefined();
     expect(routes['/flowers'].templateUrl).toBe('/plants/flowers.html');
+    expect(routes['/about']).toBeDefined();
 
     // though they could have been overwritten
 
-    expect(routes['/about']).toBeDefined();
     expect(routes['/about'].templateUrl).not.toBe('not-about.html');
   });
 
@@ -81,5 +80,4 @@ describe('Service: Routes', function () {
     expect(otherwise_route).not.toBe('/flowers');
     expect(otherwise_route).toBe('/animals');
   });
-
 });

@@ -1,5 +1,17 @@
 'use strict;'
 
+/**
+ * Midway testing
+ *
+ * @see https://github.com/yearofmoo/ngMidwayTester
+ * @see https://github.com/yearofmoo-articles/AngularJS-Testing-Article/tree/master/test/midway
+ *
+ * Caveats: Somewhat unDRY because we need to duplicate parts of our
+ *          setup code from app.js & index.html - on the other hand
+ *          this might give you a more fine grained control of your
+ *          test setup.
+ */
+
 describe("Midway Testing", function() {
 
   var tester,
@@ -52,7 +64,13 @@ describe("Midway Testing", function() {
       }
     });
 
-    tester = ngMidwayTester('app');
+    tester = ngMidwayTester('app', {
+
+      templateUrl : '/test/midway-index-template.html' // REALLY important setting. Without it, ngMidwayTester
+                                                       // would only know about ng-view & what's _inside_ it,
+                                                       // but nothing about any other part of your app _outside_
+                                                       // ng-view (top-level controllers, widgets, ...).
+    });
 
     Routes = tester.injector().get('Routes');
     Nav    = tester.injector().get('Nav');
@@ -64,26 +82,23 @@ describe("Midway Testing", function() {
     tester = null;
   });
 
-  describe("Error handling", function () {
+  describe("Redirect to the error page", function () {
 
-    it("should redirect to root if a route doesn't exist", function(done) {
+    it("when a route doesn't exist and set a 404 error", function(done) {
 
       tester.visit('/non-existend', function() {
 
         expect(tester.path()).to.equal('/error');
 
-        //expect(tester.viewElement().html()).to.contain('error');
-        //var scope = tester.viewScope();
-        //expect(scope.title).to.equal('my home page');
+        log(tester.injector().get('Errors').getErrors());
+
+        var scope = tester.viewScope();
+
+        expect(scope.error).to.exist;
+        expect(scope.error.code).to.equal(404);
+
         done();
       });
-    });
-
-    it("should have a working error route", function() {
-
-      //expect(ROUTER.routeDefined('videos_path')).to.equal(true);
-      //var url = ROUTER.routePath('videos_path');
-      //expect(url).to.equal('/videos');
     });
   })
 });
