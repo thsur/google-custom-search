@@ -1,18 +1,17 @@
 
-var defaultConfig = require('./karma.conf.js');
-var baseUrl       = 'http://localhost:80/_rn.de/src/public/app/';
-var testIndexUrl  = 'http://localhost:80/_rn.de/src/public/test/';
+var defaults = require('./karma.conf.js');
+var proxies  = require('./karma.proxies.conf.js');
 
 module.exports = function(config) {
 
-  defaultConfig(config, 'midway');
+  defaults(config, 'midway');
 
   config.frameworks = ['mocha'];
   config.autoWatch = true;
 
   config.proxies = {
 
-    '/': baseUrl,
-    '/test/': testIndexUrl
+    '/': proxies.base,
+    '/test/': proxies.test
   };
 };

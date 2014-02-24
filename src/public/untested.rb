@@ -4,12 +4,10 @@ $app   = []
 $tests = []
 
 Dir.glob('app/scripts/**/*.js') do |filename|
-
   $app.push(filename.slice(/scripts\/(.*)/, 1))
 end
 
 Dir.glob('test/spec/**/*.js') do |filename|
-
   $tests.push(filename.slice(/spec\/(.*)/, 1))
 end
 
@@ -27,12 +25,12 @@ if $0 == __FILE__
   puts
 
   if ARGV[0] =~ /^(-t)$|^(--tested)$/
-    puts 'Tested'
-    puts '------'
+    puts 'Test suites found for:'
+    puts
     puts tested
   else
-    puts 'Untested'
-    puts '--------'
+    puts 'Test suites missing for:'
+    puts
     puts untested
   end
 end

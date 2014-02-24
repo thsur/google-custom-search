@@ -8,12 +8,14 @@ describe('Controller: App', function () {
       Errors;
 
   var scope,
-      $rootScope;
+      $rootScope,
+      $location;
 
   beforeEach(
-    inject(function ($controller, _$rootScope_, _Errors_) {
+    inject(function ($controller, _$rootScope_, _Errors_, _$location_) {
 
       $rootScope = _$rootScope_;
+      $location  = _$location_;
 
       // Initialize the controller and a mock scope
 
@@ -27,12 +29,19 @@ describe('Controller: App', function () {
     })
   );
 
-  describe("Dispatches error events", function () {
+
+  describe("Errors", function () {
 
     it('should register errors to a central service when an error event occurs', function () {
 
-      $rootScope.$emit('HttpResponseError', {status: 'mock-me'});
-      log(Errors.getErrors());
+      $location.path('/err');
+      //$rootScope.$emit('$routeChangeStart', {status: 400});
+
+      log(Errors.getErrors(), $location.path());
+      //$rootScope.$emit('HttpResponseError', {status: 400});
+      log(Errors.getErrors(), $location.path());
     });
+
+    it('should intercept route change events');
   });
 });

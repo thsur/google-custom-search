@@ -43,7 +43,7 @@ describe('Service: Nav', function () {
       ]);
   }));
 
-  it('should fetch pages for a certain navigation level', function () {
+ it('should fetch pages for a certain navigation level', function () {
 
     var branch  = Nav.getByLevel();
     var compare = [

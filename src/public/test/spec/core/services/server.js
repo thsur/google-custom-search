@@ -7,6 +7,7 @@
  * @see http://andyshora.com/unit-testing-best-practices-angularjs.html
  * @see http://www.yearofmoo.com/2013/01/full-spectrum-testing-with-angularjs-and-karma.html
  * @see http://www.yearofmoo.com/2013/09/advanced-testing-and-debugging-in-angularjs.html
+ * @see http://nathanleclaire.com/blog/2013/12/13/how-to-unit-test-controllers-in-angularjs-without-setting-your-hair-on-fire/
  */
 
 describe('Service: Server', function () {

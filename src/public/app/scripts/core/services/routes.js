@@ -74,7 +74,12 @@ angular.module('routes').service('Routes', function ($rootScope, $location, $rou
       }
     }
 
-    // Trigger initial page load
+    // Trigger initial page load.
+    //
+    // We need to do this because angular has
+    // already triggered a route change, but
+    // without knowing about our routes, so
+    // chances are there's no content.
 
     $route.reload();
 

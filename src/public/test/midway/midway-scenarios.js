@@ -48,6 +48,7 @@ describe("Midway Testing", function() {
     // are still set (e.g., all core routes).
     angular.module('app').config(function (_$routeProvider_) {
 
+      //log(_routesProvider_);
       $routeProvider = _$routeProvider_;
     });
 
@@ -80,6 +81,13 @@ describe("Midway Testing", function() {
 
     tester.destroy();
     tester = null;
+  });
+
+  describe("Automatic redirection", function(){
+
+    it("should redirect to the index page when no route was given", function(){
+
+    });
   });
 
   describe("Redirect to the error page", function () {
