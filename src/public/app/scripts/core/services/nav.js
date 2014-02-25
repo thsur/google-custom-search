@@ -130,7 +130,7 @@ angular.module('navigation').service('Nav', function Nav ($rootScope, Routes) {
 
   this.isActive = function (id) {
 
-    return _.indexOf(rootline, id) !== -1;
+    return _.indexOf(rootline, id) != -1;
   };
 
   /**

@@ -7,7 +7,7 @@ angular.module('app').controller('Error', function ($scope, Errors) {
 
   if (!last) {
 
-     return;
+     last = {status: 400};
   }
 
   $scope.error = {

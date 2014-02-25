@@ -76,14 +76,16 @@ var log = (function (console) {
 
   angular.module('app', dependencies.core);
 
+  // Get initial data.
+  // We need to defer bootstrapping from here on onwards which
+  // is why we use a promise to get us a hook later on.
+
+  var config;
+  var promise = jQuery.getJSON('connect.php/public-config');
+
   // Setup, performed on module loading
 
-  var routeProvider; // To set routes dynamically we need to keep a
-                     // reference to their provider.
-
-  angular.module('app').config(function ($routeProvider) {
-
-    routeProvider = $routeProvider;
+  angular.module('app').config(function ($routeProvider, RoutesProvider) {
 
     // Add core routes
 
@@ -98,12 +100,20 @@ var log = (function (console) {
         templateUrl: 'views/partials/error.html',
         controller: 'Error'
       })
-      .otherwise({ redirectTo: '/error' });
+      .otherwise({ redirectTo: '/' });
+
+    // Add custom routes
+
+    if (config.routes) {
+
+      RoutesProvider
+            .init(config.routes, 'Main');
+    }
   });
 
   // Init, performed after module loading
 
-  angular.module('app').run(function (Server, Nav, Routes, Hud) {
+  angular.module('app').run(function (Server, Nav, Hud) {
 
     if(!debug){
 
@@ -121,22 +131,17 @@ var log = (function (console) {
 
     Server.init({ endpoint: 'connect.php' });
 
-    // Load nav & routes
+    // Load navigation(s)
 
-    Server
-      .get('/resource/pages')
-      .then(function (response) {
+    if (config.pages) {
 
-        var data = response.data || false;
+      Nav.init(config.pages);
+    }
+  });
 
-        if(data){
+  promise.success(function (response) {
 
-          Routes
-            .init(data.routes, routeProvider, 'Main'); // 'Main' being the default
-                                                       // controller for all routes.
-          Nav
-            .init(data.pages);
-        }
-      });
+    config = response;
+    angular.bootstrap(document, ['app']);
   });
 }());

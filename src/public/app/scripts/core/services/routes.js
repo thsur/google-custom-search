@@ -1,45 +1,8 @@
 'use strict;'
 
-angular.module('routes').service('Routes', function ($rootScope, $location, $route) {
+angular.module('routes').provider('Routes', function ($routeProvider) {
 
-  var $routeProvider;
-
-  var active = {};
-
-  var setActiveRoute = function(){
-
-      var path   = $location.path();
-      var routes = $route.routes;
-
-      var match;
-
-      for(var route in routes){
-
-        match = routes[route].regexp;
-
-        if(match !== undefined && path.search(match) !== -1){
-
-          active.route = routes[route].originalPath;
-          return;
-        }
-      }
-  };
-
-  this.active = active;
-
-  this.getRoutes = function () {
-
-    return $route.routes;
-  }
-
-  this.init = function (routes, routeProvider, defaultController, otherwiseRoute) {
-
-    if($routeProvider){
-
-      return;
-    }
-
-    $routeProvider = routeProvider;
+  this.init = function (routes, defaultController, otherwiseRoute) {
 
     // Set routes
 
@@ -48,7 +11,7 @@ angular.module('routes').service('Routes', function ($rootScope, $location, $rou
       route = routes[i];
 
       if(route.hasOwnProperty('url')){
-
+log('init', route);
         if(!route.url){
 
           route.url =  '/';
@@ -73,23 +36,51 @@ angular.module('routes').service('Routes', function ($rootScope, $location, $rou
         }
       }
     }
+  };
 
-    // Trigger initial page load.
-    //
-    // We need to do this because angular has
-    // already triggered a route change, but
-    // without knowing about our routes, so
-    // chances are there's no content.
+  this.$get = function ($rootScope, $location, $route) {
 
-    $route.reload();
+    var active = {};
 
-    // Listen to routes
+    var setActiveRoute = function () {
 
-    setActiveRoute();
+      var path   = $location.path();
+      var routes = $route.routes;
 
-    $rootScope.$on('$locationChangeSuccess', function() {
+      var match;
+
+      log($route.routes, path);
+
+      for(var route in routes){
+
+        match = routes[route].regexp;
+
+        log(route);
+
+        if(match !== undefined && path.search(match) !== -1){
+
+          active.route = routes[route].originalPath;
+          return;
+        }
+      }
+    };
+
+    $rootScope.$on('$locationChangeSuccess', function(event, route) {
 
       setActiveRoute();
     });
+
+    setActiveRoute();
+
+    //$route.reload();
+
+    return {
+
+      active: active,
+      getRoutes: function () {
+
+        return $route.routes;
+      }
+    };
   };
 });

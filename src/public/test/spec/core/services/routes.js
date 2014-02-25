@@ -5,8 +5,7 @@ describe('Service: Routes', function () {
   // Setup
 
   var Routes,
-      $location,
-      $routeProvider;
+      $location;
 
   var data = [
 
@@ -23,21 +22,20 @@ describe('Service: Routes', function () {
   beforeEach(function () {
 
     module('ngRoute');
-    module('routes', function(_$routeProvider_){
-
-      $routeProvider = _$routeProvider_;
+    module('routes', function($routeProvider, RoutesProvider){
 
       $routeProvider
         .when('/flowers', { templateUrl: '/plants/flowers.html' })
         .when('/about', { templateUrl: 'not-about.html' })
         .otherwise({ redirectTo: '/flowers' });
+
+      RoutesProvider
+        .init(data, 'DefaultController', '/animals');
     });
 
     inject(function (_Routes_, _$location_) {
 
       Routes = _Routes_;
-      Routes.init(data, $routeProvider, 'DefaultController', '/animals');
-
       $location = _$location_;
     });
   });
@@ -80,4 +78,7 @@ describe('Service: Routes', function () {
     expect(otherwise_route).not.toBe('/flowers');
     expect(otherwise_route).toBe('/animals');
   });
+
+  it('listens to location changes');
+  it('holds the current active route');
 });

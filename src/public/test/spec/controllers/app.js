@@ -29,19 +29,9 @@ describe('Controller: App', function () {
     })
   );
 
-
   describe("Errors", function () {
 
-    it('should register errors to a central service when an error event occurs', function () {
-
-      $location.path('/err');
-      //$rootScope.$emit('$routeChangeStart', {status: 400});
-
-      log(Errors.getErrors(), $location.path());
-      //$rootScope.$emit('HttpResponseError', {status: 400});
-      log(Errors.getErrors(), $location.path());
-    });
-
+    it('should register errors to a central service when an error event occurs');
     it('should intercept route change events');
   });
 });

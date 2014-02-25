@@ -79,9 +79,9 @@ $app->get('/login', function () use ($app) {
     //return sendError('nope', 401);
 });
 
-// Page tree
+// Config data like page tree & stuff
 
-$app->get('/resource/pages', function () use ($app) {
+$app->get('/public-config', function () use ($app) {
 
     $pages = getYAML('pages.yaml');
 

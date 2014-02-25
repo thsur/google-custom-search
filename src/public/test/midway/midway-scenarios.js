@@ -20,12 +20,12 @@ describe("Midway Testing", function() {
   var Nav,
       Routes;
 
-  // Load some data up front
+  // Load some test data up front
 
   before(function(done) {
 
     jQuery
-      .getJSON('connect.php/resource/pages', function (response) {
+      .getJSON('connect.php/public-config', function (response) {
 
         data = response;
         done();
@@ -41,28 +41,20 @@ describe("Midway Testing", function() {
 
   beforeEach(function() {
 
-    var $routeProvider;
-
-    // Reopen module.
+    // Reopen main module to add test data.
+    //
     // All settings done in app.js's angular....config()
     // are still set (e.g., all core routes).
-    angular.module('app').config(function (_$routeProvider_) {
+    angular.module('app').config(function (RoutesProvider) {
 
-      //log(_routesProvider_);
-      $routeProvider = _$routeProvider_;
+      RoutesProvider
+        .init(data.routes, 'Main'); // 'Main' being the default controller
     });
 
-    angular.module('app').run(function ($route, Routes, Nav) {
+    // Same here
+    angular.module('app').run(function (Nav) {
 
-      var data = data;
-
-      if(data){
-
-        Routes
-          .init(data.routes, $routeProvider, 'Main'); // 'Main' being the default controller
-        Nav
-          .init(data.pages);
-      }
+      Nav.init(data.pages);
     });
 
     tester = ngMidwayTester('app', {
@@ -85,8 +77,25 @@ describe("Midway Testing", function() {
 
   describe("Automatic redirection", function(){
 
-    it("should redirect to the index page when no route was given", function(){
+    it("should redirect to the index page when no route was given", function(done){
 
+      tester.visit('', function() {
+
+        expect(tester.path()).to.equal('/');
+
+        log('#', tester.injector().get('Errors').getErrors());
+
+        done();
+      });
+
+      tester.visit('/', function() {
+
+        expect(tester.path()).to.equal('/');
+
+        log('#',tester.injector().get('Errors').getErrors());
+
+        done();
+      });
     });
   });
 

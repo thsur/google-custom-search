@@ -6,14 +6,15 @@ describe('Service: Nav', function () {
 
   angular.module('routesMock', []).service('Routes', function($rootScope){
 
-    this.active = {};
-    this.setActive = function (route) {
+    var active = this.active = {};
 
-      this.active.route = route;
-      $rootScope.$emit('$locationChangeSuccess');
-    };
+    $rootScope.$on('$locationChangeSuccess', function (event, current) {
+
+      active.route = current;
+    })
   });
 
+  beforeEach(module('ngRoute'));
   beforeEach(module('navigation'));
   beforeEach(module('routesMock'));
 
@@ -21,27 +22,38 @@ describe('Service: Nav', function () {
 
   var Nav,
       Routes,
-      $rootScope;
+      $rootScope,
+      $location;
 
-  beforeEach(inject(function (_Nav_, _Routes_, _$rootScope_) {
+  beforeEach(function () {
+    inject(function (_Nav_, _Routes_, _$rootScope_) {
 
-    Nav        = _Nav_;
-    Routes     = _Routes_;
-    $rootScope = _$rootScope_;
+      Nav        = _Nav_;
+      Routes     = _Routes_;
+      $rootScope = _$rootScope_;
 
-    Nav
-      .init([
+      $location  = {
 
-        {id: 0, url: "/"},
-        {id: 1, url: "/animals"},
-        {id: 2, url: "/animals/apes", parent: 1},
-        {id: 3, url: "/animals/apes/gorillas", parent: 2},
-        {id: 4, url: "/animals/monkeys", parent: 1},
-        {id: 5, url: "/animals/monkeys/chimpanzees", parent: 4},
-        {id: 6, url: "/about"},
+        path: function (path) {
 
-      ]);
-  }));
+          $rootScope.$emit('$locationChangeSuccess', path);
+        }
+      };
+
+      Nav
+        .init([
+
+          {id: 0, url: "/"},
+          {id: 1, url: "/animals"},
+          {id: 2, url: "/animals/apes", parent: 1},
+          {id: 3, url: "/animals/apes/gorillas", parent: 2},
+          {id: 4, url: "/animals/monkeys", parent: 1},
+          {id: 5, url: "/animals/monkeys/chimpanzees", parent: 4},
+          {id: 6, url: "/about"},
+
+        ]);
+    });
+  });
 
  it('should fetch pages for a certain navigation level', function () {
 
@@ -56,7 +68,7 @@ describe('Service: Nav', function () {
     expect(branch).toEqual(compare);
 
     // Mimic user hits a page
-    Routes.setActive('/animals');
+    $location.path('/animals');
 
     branch  = Nav.getByLevel(1);
     compare = [
@@ -68,7 +80,7 @@ describe('Service: Nav', function () {
     expect(branch).toEqual(compare);
 
     // Mimic user hits a page
-    Routes.setActive('/animals/monkeys');
+    $location.path('/animals/monkeys');
 
     branch  = Nav.getByLevel(2);
     compare = [
@@ -81,7 +93,7 @@ describe('Service: Nav', function () {
 
   it('should fetch pages for a level other than level 0 only when parent is active', function () {
 
-    Routes.setActive('/non-existent');
+    $location.path('/non-existent');
 
     expect(Nav.getByLevel(1).length).toBe(0);
     expect(Nav.getByLevel(0).length).toBe(3); // or: Nav.getByLevel()
@@ -101,30 +113,30 @@ describe('Service: Nav', function () {
 
   it('should tell if a page is active', function () {
 
-    var page_id = 0;
+    var page_id = 1;
 
-    Routes.setActive('/non-existent');
+    $location.path('/non-existent');
     expect(Nav.isActive(page_id)).toBe(false);
 
-    Routes.setActive('/');
+    $location.path('/animals');
     expect(Nav.isActive(page_id)).toBe(true);
   });
 
   it('maintains a rootline, i.e. a stack of active pages', function () {
 
-    Routes.setActive('/');
+    $location.path('/');
     expect(Nav.getRootline()).toEqual([0]);
 
-    Routes.setActive('/animals/apes');
+    $location.path('/animals/apes');
     expect(Nav.getRootline()).toEqual([1,2]);
 
-    Routes.setActive('/animals/apes/gorillas');
+    $location.path('/animals/apes/gorillas');
     expect(Nav.getRootline()).toEqual([1,2,3]);
 
-    Routes.setActive('/animals');
+    $location.path('/animals');
     expect(Nav.getRootline()).toEqual([1]);
 
-    Routes.setActive('/non-existent');
+    $location.path('/non-existent');
     expect(Nav.getRootline()).toEqual([]);
   });
 
@@ -144,7 +156,7 @@ describe('Service: Nav', function () {
     Nav.init();
 
     // Mimic a route change
-    Routes.setActive('/');
+    $location.path('/');
 
     expect($rootScope.$on).toHaveBeenCalledWith('$locationChangeSuccess', jasmine.any(Function));
   });
