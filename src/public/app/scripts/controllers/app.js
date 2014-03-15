@@ -4,11 +4,25 @@
  * App controller
  * Stub
  */
-angular.module('app').controller('App', function ($rootScope, $scope, $route, $location, Errors) {
+angular.module('app').controller('App', function ($rootScope, $scope, $route, $location, Errors, Routes) {
+
+  var paths = {
+
+    login: Routes.getNamed('login'),
+    error: Routes.getNamed('error'),
+  };
+
+  function internal404 () {
+
+    Errors.push({status: 404});
+    $location.path(paths.error);
+  }
 
   // Dispatch country-wide events
 
   var subscriptions = [
+
+    // Server errors
 
     $rootScope.$on('HttpResponseError', function (event, response) {
 
@@ -16,27 +30,31 @@ angular.module('app').controller('App', function ($rootScope, $scope, $route, $l
 
       if (response.status === 401) {
 
-        $location.path('/login');
+        if ($location.path() !== paths.login) {
+
+          $location.path(paths.login);
+        }
         return;
       }
 
-      if ($location.path() === '/error') {
+      if ($location.path() === paths.error) {
 
         $route.reload();
         return;
       }
 
-      $location.path('/error');
+      $location.path(paths.error);
     }),
+
+    // Routing errors
 
     $rootScope.$on('$routeChangeStart', function (event, current, prev) {
 
-      if (current.redirectTo && current.redirectTo === '/error') {
+      if (!current) { internal404(); };
+    }),
+    $rootScope.$on('$locationChangeSuccess', function (event, current, prev) {
 
-        Errors.push({status: 404});
-        $location.path('/error');
-        return;
-      }
+      if (!Routes.active.route) { internal404(); };
     })
   ];
 

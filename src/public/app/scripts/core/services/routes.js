@@ -2,6 +2,25 @@
 
 angular.module('routes').provider('Routes', function ($routeProvider) {
 
+  var namedRoutes = {};
+
+  /**
+   * Add named routes, i.e. an object with
+   * each key holding a route as value.
+   */
+  this.named = function (routes) {
+
+    for (var name in routes) {
+
+      if (angular.isString(routes[name])) {
+
+        namedRoutes[name] = routes[name];
+      }
+    }
+
+    return this;
+  };
+
   this.init = function (routes, defaultController, otherwiseRoute) {
 
     // Set routes
@@ -11,7 +30,7 @@ angular.module('routes').provider('Routes', function ($routeProvider) {
       route = routes[i];
 
       if(route.hasOwnProperty('url')){
-log('init', route);
+
         if(!route.url){
 
           route.url =  '/';
@@ -36,6 +55,8 @@ log('init', route);
         }
       }
     }
+
+    return this;
   };
 
   this.$get = function ($rootScope, $location, $route) {
@@ -49,20 +70,16 @@ log('init', route);
 
       var match;
 
-      log($route.routes, path);
-
       for(var route in routes){
 
         match = routes[route].regexp;
-
-        log(route);
 
         if(match !== undefined && path.search(match) !== -1){
 
           active.route = routes[route].originalPath;
           return;
         }
-      }
+      };
     };
 
     $rootScope.$on('$locationChangeSuccess', function(event, route) {
@@ -72,14 +89,19 @@ log('init', route);
 
     setActiveRoute();
 
-    //$route.reload();
-
     return {
 
       active: active,
       getRoutes: function () {
 
         return $route.routes;
+      },
+      getNamed: function (name) {
+
+        if (namedRoutes[name]) {
+
+          return namedRoutes[name];
+        }
       }
     };
   };

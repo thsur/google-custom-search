@@ -5,39 +5,10 @@
  * It's meant to talk to a server, not being one.
  *
  * Small wrapper around $http.
- * See usage example below.
  *
  * @todo Refactor to a provider for more isolated configuration
  * @see  https://github.com/angular/angular.js/wiki/Understanding-Dependency-Injection
  */
-
-/*
-
-// Configure
-
-Server.init({ endpoint: 'connect.php' });
-
-// Returns a promise (the one build up by $http)
-
-Server
-  .get('/get/something')
-  .then(function (response) {
-
-    console.log('success', response);
-
-  }, function (response) {
-
-    console.log('error', response);
-  });
-
-// Callback-style
-
-Server.get('/get/something', function (response) {
-
-  console.log('success only', response);
-});
-
-*/
 
 angular.module('http').factory('Server', function ($http) {
 
@@ -71,10 +42,12 @@ angular.module('http').factory('Server', function ($http) {
   /**
    * Issue a request.
    *
-   * @param {String}   query    - Most likely some path ('/get/something').
-   *                              Gets prepended with {@see settings.endpoint}.
-   * @param {Object}   config   - additional $http settings (optional)
-   * @param {Function} callback - to mimic callback-like behaviour
+   * @param String   query     Most likely some path ('/get/something').
+   *                           Gets prepended with {@see settings.endpoint}.
+   * @param Object   config    Additional $http settings (optional).
+   * @param Function callback  To mimic callback-like behaviour.
+   *
+   * @return Object  Promise   The one $http returns.
    */
 
   ext.xhr = function (query, config, callback) {

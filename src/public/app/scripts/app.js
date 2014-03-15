@@ -87,27 +87,29 @@ var log = (function (console) {
 
   angular.module('app').config(function ($routeProvider, RoutesProvider) {
 
+    var core = {login: '/login', error: '/error'};
+
     // Add core routes
 
     $routeProvider
-      .when('/login', {
+      .when(core.login, {
 
         controller: 'Login',
         templateUrl: 'views/partials/login.html'
       })
-      .when('/error', {
+      .when(core.error, {
 
         templateUrl: 'views/partials/error.html',
         controller: 'Error'
-      })
-      .otherwise({ redirectTo: '/' });
+      });
 
     // Add custom routes
 
     if (config.routes) {
 
       RoutesProvider
-            .init(config.routes, 'Main');
+            .named(core)
+            .init(config.routes, 'Main'); // 'Main' being the default controller
     }
   });
 
@@ -128,17 +130,16 @@ var log = (function (console) {
     }
 
     // Set server endpoint
-
     Server.init({ endpoint: 'connect.php' });
 
     // Load navigation(s)
-
     if (config.pages) {
 
       Nav.init(config.pages);
     }
   });
 
+  // Bootstrap when ready
   promise.success(function (response) {
 
     config = response;

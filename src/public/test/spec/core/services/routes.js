@@ -80,5 +80,5 @@ describe('Service: Routes', function () {
   });
 
   it('listens to location changes');
-  it('holds the current active route');
+  it('holds the path of the current active route, if there is one');
 });

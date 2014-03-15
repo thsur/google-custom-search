@@ -1,6 +1,7 @@
 
 module.exports = {
 
-  base: 'http://tin-lizzy/app/',
-  test: 'http://tin-lizzy/test/'
+  base: 'http://tinlizzy/app/',
+  test: 'http://tinlizzy/test/',
+  endpoint: 'connect.php'
 };
