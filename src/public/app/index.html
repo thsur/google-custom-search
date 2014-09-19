@@ -85,7 +85,15 @@
     </div>
 
     <!-- When we're busy loading. Directive is a stub. No CSS attached. -->
-    <butterbar style="position: absolute; top: 10px;">Loading...</butterbar>
+    <butterbar class="modal" style="position: absolute; top: 10px;">Loading...</butterbar>
+
+    <!--
+    <butterbar class="modal" ng-show="loading">
+        <ul id="loading">
+            <li class="bar" ng-repeat="i in [0,1,2]"></li>
+        </ul>
+    </butterbar>
+    -->
 
     <!-- On-screen logger. No CSS attached. -->
     <hud></hud>

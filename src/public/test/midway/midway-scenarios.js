@@ -5,6 +5,11 @@
  *
  * @see https://github.com/yearofmoo/ngMidwayTester
  * @see https://github.com/yearofmoo-articles/AngularJS-Testing-Article/tree/master/test/midway
+ *
+ * For spies & stubbing & mocking with chai, get:
+ *
+ * https://github.com/domenic/sinon-chai
+ *
  */
 
 describe("Midway Testing", function () {
