@@ -38,7 +38,6 @@ var log = (function (console) {
       'routes',
       'navigation',
       'butterbar',
-      'hud',
       'messages',
       'errors'
     ],
@@ -76,12 +75,12 @@ var log = (function (console) {
 
   angular.module('app', dependencies.core);
 
-  // Get initial data.
-  // We need to defer bootstrapping from here on onwards which
+  // Get routes as initial data.
+  // We need to defer bootstrapping from here on onwards, which
   // is why we use a promise to get us a hook later on.
 
-  var config;
-  var promise = jQuery.getJSON('connect.php/public-config');
+  var routes;
+  var promise = jQuery.getJSON('connect.php/routes');
 
   // Setup, performed on module loading
 
@@ -105,17 +104,17 @@ var log = (function (console) {
 
     // Add custom routes
 
-    if (config.routes) {
+    if (routes) {
 
       RoutesProvider
             .named(core)
-            .init(config.routes, 'Main'); // 'Main' being the default controller
+            .init(routes, 'Main'); // 'Main' being the default controller
     }
   });
 
   // Init, performed after module loading
 
-  angular.module('app').run(function (Server, Nav, Hud) {
+  angular.module('app').run(function (Server, Nav) {
 
     if(!debug){
 
@@ -125,24 +124,22 @@ var log = (function (console) {
 
         console.log = log;
       }
-
-      Hud.off();
     }
 
     // Set server endpoint
     Server.init({ endpoint: 'connect.php' });
 
     // Load navigation(s)
-    if (config.pages) {
+    if (routes) {
 
-      Nav.init(config.pages);
+      Nav.init(routes);
     }
   });
 
   // Bootstrap when ready
   promise.success(function (response) {
 
-    config = response;
+    routes = response;
     angular.bootstrap(document, ['app']);
   });
 }());

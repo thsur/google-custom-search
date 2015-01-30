@@ -8,28 +8,16 @@ angular.module('navigation').directive('nav', function (Nav, Routes) {
     scope: true,
     controller: function($scope, $element, $attrs) {
 
-      var level = $element.data('level');
-
-      if(!angular.isNumber(level)){
-
-        level = 0;
-      }
-
-      $scope.config = {
-
-        level: level
-      };
-
       $scope.route = Routes.active;
 
       $scope.$watchCollection('route', function(){
 
-        $scope.nav = Nav.getByLevel($scope.config.level);
+        $scope.nav = Nav.get();
       });
 
-      $scope.isActive = function (id) {
+      $scope.isActive = function (url) {
 
-        return Nav.isActive(id);
+        return Nav.isActive(url);
       };
     },
     link: function (scope, element, attrs) {} };

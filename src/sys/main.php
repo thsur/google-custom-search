@@ -83,45 +83,30 @@ $app->post('/login', function (Request $request) use ($app) {
     return sendError(401);
 });
 
-// Config data like page tree & stuff
+// Get page tree
 
-$app->get('/public-config', function () use ($app) {
+$app->get('/routes', function () use ($app) {
 
-    $pages = $app['storage']->get('pages');
+    $routes = $app['storage']->get('routes');
 
-    if (!$pages) {
+    if (!$routes) {
 
         return sendError();
     }
 
-    $pages = array_pop($pages);
-
-    // Flatten page tree & set ids and
-    // parent/child relations.
-
-    $flat  = $app['pages']->flatten($pages);
+    $routes = array_pop($routes);
 
     // Add a default access level if none set
 
-    foreach ($flat as &$page) {
+    foreach ($routes as &$route) {
 
-        if (!isset($page['access'])) {
+        if (!isset($route['access'])) {
 
-            $page['access'] = null; // @todo Refactor to something real
+            $route['access'] = null; // @todo Refactor to something real
         }
     }
 
-    // Tailor response
-
-    $send = array();
-
-    $keep_in_pages      = array('id', 'title', 'url', 'parent', 'children', 'access');
-    $remove_from_routes = array('id', 'parent', 'children');
-
-    $send['pages']  = $app['filter']->keep_matching($flat, $keep_in_pages);
-    $send['routes'] = $app['filter']->remove_matching($flat, $remove_from_routes);
-
-    return $app->json($send);
+    return $app->json($routes);
 });
 
 // Default, i.e. any other route

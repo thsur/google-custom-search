@@ -2,11 +2,17 @@
 
 angular.module('routes').provider('Routes', function ($routeProvider) {
 
+  /**
+   * Used to hold named/aliased routes, so we can refer to them
+   * with their respective keyword across the system. Think of
+   * special routes like error and login routes.
+   */
   var namedRoutes = {};
 
   /**
-   * Add named routes, i.e. an object with
-   * each key holding a route as value.
+   * Add named routes (see above) as an object with
+   * each key representing the name/alias to the route that is
+   * given as the key's value.
    */
   this.named = function (routes) {
 
@@ -23,7 +29,7 @@ angular.module('routes').provider('Routes', function ($routeProvider) {
 
   this.init = function (routes, defaultController, otherwiseRoute) {
 
-    // Set routes
+    // Parse & set routes
 
     for(var i = 0, k = routes.length, route; i < k; i++ ){
 

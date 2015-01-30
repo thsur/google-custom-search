@@ -1,8 +1,7 @@
 'use strict';
 
 /**
- * Server module, though the name is slightly misleading:
- * It's meant to talk to a server, not being one.
+ * Server RPC module.
  *
  * Small wrapper around $http.
  *

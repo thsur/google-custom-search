@@ -25,7 +25,7 @@ class FileStorage{
 
         $this->finder
              ->files()
-             ->name('/^'.$name.'[.](json|yaml)$/');
+             ->name('/^'.$name.'[.](json|yml|yaml)$/');
 
         foreach ($this->finder as $file) {
 
@@ -41,7 +41,7 @@ class FileStorage{
      * Get something from storage, in this case a file.
      *
      * Returns parsed YAML or JSON, depending on the
-     * extension of the given file (yaml|json).
+     * extension of the given file (yml|yaml|json).
      *
      * @param  String $name - a file name *without* extension
      * @return String
@@ -56,6 +56,7 @@ class FileStorage{
         }
 
         switch ($result['type']) {
+            case 'yml':
             case 'yaml':
                 return Yaml::parse($result['contents']);
                 break;
@@ -73,48 +74,6 @@ class FileStorage{
 
         $this->finder  = new Finder();
         $this->finder->in($storage_path.'/');
-    }
-}
-
-/**
- * Page tree(s) helper.
- */
-
-class Pages{
-
-    public function flatten(Array $pages){
-
-        $flat  = array();
-        $queue = $pages;
-
-        $id    = 0;
-
-        while(count($queue) > 0)
-        {
-            $current       = array_shift($queue);
-            $current['id'] = $id;
-
-            $id++;
-
-            if (isset($current['pages'])) {
-
-                $current['children'] = true;
-
-                foreach ($current['pages'] as $value) {
-
-                    $value['parent'] = $current['id'];
-
-                    // Push children back to queue
-                    array_unshift($queue, $value);
-                }
-
-                unset($current['pages']);
-            }
-
-            $flat[] = $current;
-        }
-
-        return $flat;
     }
 }
 

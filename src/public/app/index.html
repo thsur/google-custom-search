@@ -58,28 +58,19 @@
     <div class="container" ng-controller="App" ng-cloak>
 
       <header class="header">
-        <nav x-nav data-level="0">
+        <nav x-nav>
           <ul class="nav nav-pills">
-            <li ng-repeat="entry in nav" ng-class="{active: isActive(entry.id)}">
+            <li ng-repeat="entry in nav" ng-class="{active: isActive(entry.url)}">
               <a ng-href="#{{entry.url}}">{{entry.title}}</a>
             </li>
           </ul>
         </nav>
-        <h1 class="text-muted">A Gun for Hire</h1>
       </header>
-
-      <nav x-nav data-level="1">
-        <ul class="nav nav-pills">
-          <li ng-repeat="entry in nav" ng-class="{active: isActive(entry.id)}">
-            <a ng-href="#{{entry.url}}">{{entry.title}}</a>
-          </li>
-        </ul>
-      </nav>
 
       <section class="main" ng-view ng-cloak></section>
 
       <footer ng-controller="Footer">
-        <p class="copy">&copy; {{ date | date:'y' }} Storytellers &amp; Sons</p>
+        <p class="copy">&copy; {{ date | date:'y' }} Your WoMan</p>
       </footer>
 
     </div>
@@ -125,8 +116,6 @@
     <script src="scripts/core/services/error.js"></script>
     <script src="scripts/core/directives/nav.js"></script>
     <script src="scripts/core/services/nav.js"></script>
-    <script src="scripts/core/directives/hud.js"></script>
-    <script src="scripts/core/services/hud.js"></script>
     <script src="scripts/core/directives/butterbar.js"></script>
     <script src="scripts/controllers/app.js"></script>
     <script src="scripts/controllers/main.js"></script>
