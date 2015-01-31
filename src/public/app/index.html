@@ -13,8 +13,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- @see https://developers.google.com/webfonts/docs/webfont_loader -->
-  <script type="text/javascript">
+    <!-- @see https://developers.google.com/webfonts/docs/webfont_loader -->
+    <script type="text/javascript">
 
         WebFontConfig = {
             google: { families: [ 'Noto Sans', 'Roboto:300' ] }
@@ -31,6 +31,9 @@
         })();
     </script>
 
+    <!-- Set a base, required for '#'-less urls -->
+    <script>document.write('<base href="' + window.location.pathname + '">');</script>
+
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
@@ -45,9 +48,8 @@
     <!-- lesscss -->
     <!-- Remove in build & switch to build notation above. -->
     <link rel="stylesheet/less" type="text/css" href="styles/less/main.less" />
-    <script src="bower_components/less/dist/less-1.6.2.min.js"></script>
+    <script src="bower_components/less/dist/less-1.7.5.min.js"></script>
     <!-- endless -->
-
   </head>
   <body>
     <!--[if lt IE 8]>
@@ -57,9 +59,19 @@
     <!-- Add your site or application content here -->
     <div class="container" ng-controller="App" ng-cloak>
 
-      <header class="header">
-        <nav x-nav>
-          <ul class="nav nav-pills">
+      <header class="header navbar navbar-default navbar-static-top navbar-inverse">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">thing</a>
+        </div>
+
+        <nav x-nav class="collapse navbar-collapse" role="navigation">
+          <ul class="nav navbar-nav">
             <li ng-repeat="entry in nav" ng-class="{active: isActive(entry.url)}">
               <a ng-href="#{{entry.url}}">{{entry.title}}</a>
             </li>

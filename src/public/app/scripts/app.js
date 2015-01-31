@@ -84,7 +84,7 @@ var log = (function (console) {
 
   // Setup, performed on module loading
 
-  angular.module('app').config(function ($routeProvider, RoutesProvider) {
+  angular.module('app').config(function ($locationProvider, $routeProvider, RoutesProvider) {
 
     var core = {login: '/login', error: '/error'};
 
@@ -110,6 +110,13 @@ var log = (function (console) {
             .named(core)
             .init(routes, 'Main'); // 'Main' being the default controller
     }
+
+    // Don't append a '#' to urls
+
+    log(routes, $routeProvider);
+    $locationProvider.html5Mode(true);
+
+
   });
 
   // Init, performed after module loading

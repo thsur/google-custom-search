@@ -11,11 +11,11 @@
     "angular-sanitize": "1.2.12",
     "angular-route": "1.2.12",
     "underscore": "~1.5.2",
-    "bootstrap": "~3.1.1"
+    "bootstrap": "~3.3.0"
   },
   "devDependencies": {
     "angular-mocks": "1.2.12",
     "angular-scenario": "1.2.12",
-    "less": "~1.6.3"
+    "less": "~1.7.3"
   }
 }

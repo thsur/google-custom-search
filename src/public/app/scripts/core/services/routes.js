@@ -50,7 +50,8 @@ angular.module('routes').provider('Routes', function ($routeProvider) {
         $routeProvider.when(route.url, {
 
           templateUrl: route.view,
-          controller: route.controller
+          controller: route.controller,
+          redirectTo: route.redirect || null
         });
 
         // Set default route
