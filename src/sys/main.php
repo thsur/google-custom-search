@@ -77,10 +77,10 @@ $app->post('/login', function (Request $request) use ($app) {
 
     }
 
+    return sendError(401);
+
     var_dump($request); exit('##');
     return $app->json($request);
-
-    return sendError(401);
 });
 
 // Get page tree

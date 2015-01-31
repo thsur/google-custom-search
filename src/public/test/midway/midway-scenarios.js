@@ -15,7 +15,7 @@
 describe("Midway Testing", function () {
 
   var tester,
-      data;
+      routes;
 
   var Nav,
       Routes,
@@ -26,14 +26,14 @@ describe("Midway Testing", function () {
   before(function (done) {
 
     jQuery
-      .getJSON('connect.php/public-config', function (response) {
+      .getJSON('connect.php/routes', function (response) {
 
-        data = response;
+        routes = response;
         done();
       })
       .fail(function (response) {
 
-        log("No initial data. Check url & Karma's proxy settings.");
+        log("No initial data. Check url & Karma's proxy settings. Response: " + response.status + " " + response.statusText);
         done();
       });
 
@@ -49,13 +49,13 @@ describe("Midway Testing", function () {
     angular.module('app').config(function (RoutesProvider) {
 
       RoutesProvider
-        .init(data.routes, 'Main'); // 'Main' being the default controller
+        .init(routes, 'Main'); // 'Main' being the default controller
     });
 
     // Same here
     angular.module('app').run(function (Nav) {
 
-      Nav.init(data.pages);
+      Nav.init(routes);
     });
 
     tester = ngMidwayTester('app', {
@@ -86,15 +86,6 @@ describe("Midway Testing", function () {
           expect(tester.path()).to.equal('/');
           done();
       })
-    });
-
-    it("redirects to index when no route was given", function (done) {
-
-      tester.visit('', function () {
-
-        expect(tester.path()).to.equal('/');
-        done();
-      });
     });
 
     it("redirects to error when a route doesn't exist", function (done) {
@@ -133,7 +124,7 @@ describe("Midway Testing", function () {
         });
     });
 
-    it("redirects to login when a route responds with a 401");
+    it("redirects to login when a access-restricted route responds with a 401");
 
     // Route has visibility settings
     // Element has visibility settings

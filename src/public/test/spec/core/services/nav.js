@@ -43,101 +43,38 @@ describe('Service: Nav', function () {
       Nav
         .init([
 
-          {id: 0, url: "/"},
-          {id: 1, url: "/animals"},
-          {id: 2, url: "/animals/apes", parent: 1},
-          {id: 3, url: "/animals/apes/gorillas", parent: 2},
-          {id: 4, url: "/animals/monkeys", parent: 1},
-          {id: 5, url: "/animals/monkeys/chimpanzees", parent: 4},
-          {id: 6, url: "/about"},
+          {title: 'Monkeys & Apes', url: "/"},
+          {title: 'Apes', url: "/apes"},
+          {title: 'Gorillas', url: "/apes/gorillas"},
+          {title: 'Monkeys', url: "/monkeys"},
+          {title: 'Chimpanzees', url: "/monkeys/chimpanzees"},
+          {title: 'About', url: "/about"},
 
         ]);
     });
   });
 
- it('should fetch pages for a certain navigation level', function () {
+  it('provides an array holding nav entries', function () {
 
-    var branch  = Nav.getByLevel();
-    var compare = [
-
-        {id: 0, url: "/"},
-        {id: 1, url: "/animals"},
-        {id: 6, url: "/about"},
-    ];
-
-    expect(branch).toEqual(compare);
-
-    // Mimic user hits a page
-    $location.path('/animals');
-
-    branch  = Nav.getByLevel(1);
-    compare = [
-
-        {id: 2, url: "/animals/apes", parent: 1},
-        {id: 4, url: "/animals/monkeys", parent: 1},
-    ];
-
-    expect(branch).toEqual(compare);
-
-    // Mimic user hits a page
-    $location.path('/animals/monkeys');
-
-    branch  = Nav.getByLevel(2);
-    compare = [
-
-        {id: 5, url: "/animals/monkeys/chimpanzees", parent: 4},
-    ];
-
-    expect(branch).toEqual(compare);
+    var entries = Nav.get();
+    expect(entries.length > 0).toBe(true);
   });
 
-  it('should fetch pages for a level other than level 0 only when parent is active', function () {
+  it('can tell by its url if an entry is active', function () {
 
-    $location.path('/non-existent');
+    var entries = Nav.get();
+    var url;
 
-    expect(Nav.getByLevel(1).length).toBe(0);
-    expect(Nav.getByLevel(0).length).toBe(3); // or: Nav.getByLevel()
-  });
+    for (var i = 0; i <= 2; i++) {
 
-  it('should fetch pages for a given page id no matter if it is active or not', function () {
+      url = entries[i].url;
 
-    var branch  = Nav.getById(1);
-    var compare = [
+      expect(Nav.isActive(url)).toBe(false);
 
-        {id: 2, url: "/animals/apes", parent: 1},
-        {id: 4, url: "/animals/monkeys", parent: 1},
-    ];
+      $location.path(url);
 
-    expect(branch).toEqual(compare);
-  });
-
-  it('should tell if a page is active', function () {
-
-    var page_id = 1;
-
-    $location.path('/non-existent');
-    expect(Nav.isActive(page_id)).toBe(false);
-
-    $location.path('/animals');
-    expect(Nav.isActive(page_id)).toBe(true);
-  });
-
-  it('maintains a rootline, i.e. a stack of active pages', function () {
-
-    $location.path('/');
-    expect(Nav.getRootline()).toEqual([0]);
-
-    $location.path('/animals/apes');
-    expect(Nav.getRootline()).toEqual([1,2]);
-
-    $location.path('/animals/apes/gorillas');
-    expect(Nav.getRootline()).toEqual([1,2,3]);
-
-    $location.path('/animals');
-    expect(Nav.getRootline()).toEqual([1]);
-
-    $location.path('/non-existent');
-    expect(Nav.getRootline()).toEqual([]);
+      expect(Nav.isActive(url)).toBe(true);
+    }
   });
 
   // "The important thing is a thing's behaviour, not how it works."
@@ -147,7 +84,7 @@ describe('Service: Nav', function () {
   //
   // While this holds true for most cases, here's how you would test
   // if something listens to an event:
-  it('should update the rootline by listening to an appropriate event', function () {
+  it('listens to location events', function () {
 
     // Set event listening spy before Nav.init()
     spyOn($rootScope, '$on').and.callThrough();
@@ -159,29 +96,5 @@ describe('Service: Nav', function () {
     $location.path('/');
 
     expect($rootScope.$on).toHaveBeenCalledWith('$locationChangeSuccess', jasmine.any(Function));
-  });
-
-  it('should always provide an array', function () {
-
-    var valid   = Nav.getByLevel();
-    var invalid = Nav.getByLevel(100);
-
-    expect(valid).toEqual(jasmine.any(Array));
-    expect(invalid).toEqual(jasmine.any(Array));
-
-    valid   = Nav.getById(1);
-    invalid = Nav.getById(100);
-
-    expect(valid).toEqual(jasmine.any(Array));
-    expect(invalid).toEqual(jasmine.any(Array));
-
-    Nav.init([]);
-    expect(Nav.getPages()).toEqual(jasmine.any(Array));
-
-    Nav.init({});
-    expect(Nav.getPages()).toEqual(jasmine.any(Array));
-
-    Nav.init();
-    expect(Nav.getPages()).toEqual(jasmine.any(Array));
   });
 });

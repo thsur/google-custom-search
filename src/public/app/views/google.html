@@ -1,0 +1,35 @@
+
+<div ng-controller="Google">
+
+  <div class="jumbotron">
+
+    <form x-form-utils name="google-search" class="form-horizontal">
+      <fieldset>
+        <div class="form-group">
+          <div class="col-sm-10">
+            <input id="search" class="form-control input-lg" placeholder="Google search" autofocus ng-model="query.q">
+          </div>
+          <div class="col-sm-2">
+            <input type="submit" class="btn btn-lg btn-primary" value="Okay">
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend class="text-muted">Snippets</legend>
+        <div class="form-group">
+          <div class="col-sm-12">
+            <button x-form-utils ng-click="query.q = query.q + ' site:'; focus('#search')"
+                    class="btn btn-sm">site:</button>
+            <button x-form-utils ng-click="query.q = query.q + ' allintitle:'; focus('#search')"
+                    class="btn btn-sm">allintitle:</button>
+            <button x-form-utils ng-click="query.q = query.q + ' filetype:'; focus('#search')"
+                    class="btn btn-sm">filetype:</button>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+
+  </div>
+
+</form>
+</div>

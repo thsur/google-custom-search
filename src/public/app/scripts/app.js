@@ -37,6 +37,7 @@ var log = (function (console) {
       'http',
       'routes',
       'navigation',
+      'ui',
       'butterbar',
       'messages',
       'errors'
@@ -88,6 +89,10 @@ var log = (function (console) {
 
     var core = {login: '/login', error: '/error'};
 
+    // Don't append a '#' to urls
+
+    $locationProvider.html5Mode(true);
+
     // Add core routes
 
     $routeProvider
@@ -110,13 +115,6 @@ var log = (function (console) {
             .named(core)
             .init(routes, 'Main'); // 'Main' being the default controller
     }
-
-    // Don't append a '#' to urls
-
-    log(routes, $routeProvider);
-    $locationProvider.html5Mode(true);
-
-
   });
 
   // Init, performed after module loading
