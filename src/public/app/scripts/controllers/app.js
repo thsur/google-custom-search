@@ -16,6 +16,7 @@ angular.module('app').controller('App', function ($rootScope, $scope, $route, $l
 
     Errors.push({status: 404});
     $location.path(paths.error);
+
   }
 
   // Dispatch country-wide events

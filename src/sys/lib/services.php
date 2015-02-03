@@ -1,7 +1,72 @@
 <?php
 
+namespace Crawler;
+
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Finder\Finder;
+
+use \Google_Client;
+use \Google_Service_Customsearch;
+
+class GoogleSearch {
+
+    /**
+     * Custom search engine
+     *
+     * @var Google_Service_Customsearch_Cse_Resource
+     */
+    protected $cse;
+
+    /**
+     * @var Google_Service_Customsearch
+     */
+    protected $service;
+
+    /**
+     * Default search engine options
+     *
+     * @var Array
+     */
+    protected $options;
+
+    /**
+     * Do a custom query.
+     *
+     * @param  String - Query
+     * @param  Array  - Options
+     * @return Array
+     */
+    public function query($query, Array $options = array()) {
+
+        $options = array_merge($this->options, $options);
+        $result  = $this->service->cse->listCse($query, $options);
+
+        $filtered = array(
+
+            'result'  => $result->getSearchInformation(),
+            'queries' => $result->getQueries(),
+            'items'   => $result->getItems()
+        );
+
+        return $filtered;
+    }
+
+    /**
+     * @param Google_Client
+     * @param String  - Custom search engine id
+     * @param Array   - Default search options
+     */
+    public function __construct(Google_Client $client, $cse_id, Array $options = array()) {
+
+        $this->service = new \Google_Service_Customsearch($client);
+        $this->options = array_merge(array(
+
+            'cx'     => $cse_id,
+            'fields' => 'queries,searchInformation,items(title,link,displayLink,snippet,formattedUrl)'
+
+        ), $options);
+    }
+}
 
 /**
  * Handle stored files.
@@ -74,35 +139,5 @@ class FileStorage{
 
         $this->finder  = new Finder();
         $this->finder->in($storage_path.'/');
-    }
-}
-
-/**
- * Array filter functions.
- */
-class Filter{
-
-    public function keep_matching(Array $set, Array $keys){
-
-        $filter = array_flip($keys);
-
-        array_walk($set, function (&$entry) use ($filter) {
-
-            $entry = array_intersect_key($entry, $filter);
-        });
-
-        return $set;
-    }
-
-    public function remove_matching(Array $set, Array $keys){
-
-        $filter = array_flip($keys);
-
-        array_walk($set, function (&$entry) use ($filter) {
-
-            $entry = array_diff_key($entry, $filter);
-        });
-
-        return $set;
     }
 }

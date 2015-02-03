@@ -15,7 +15,9 @@
 describe("Midway Testing", function () {
 
   var tester,
-      routes;
+      routes,
+      $location,
+      $rootScope;
 
   var Nav,
       Routes,
@@ -24,6 +26,14 @@ describe("Midway Testing", function () {
   // Load some test data up front
 
   before(function (done) {
+
+    angular.module('app').config(function ($locationProvider) {
+
+      // We operate on the body of midway-index-template.html only,
+      // so we're unable to set a base tag - which is why we need to
+      // switch off '#'-less mode for urls.
+      $locationProvider.html5Mode(false);
+    });
 
     jQuery
       .getJSON('connect.php/routes', function (response) {
@@ -36,7 +46,6 @@ describe("Midway Testing", function () {
         log("No initial data. Check url & Karma's proxy settings. Response: " + response.status + " " + response.statusText);
         done();
       });
-
   });
 
   // Bootstrap app
@@ -66,6 +75,9 @@ describe("Midway Testing", function () {
                                                        // ng-view (top-level controllers, widgets, ...).
     });
 
+    $location  = tester.injector().get('$location');
+    $rootScope = tester.injector().get('$rootScope');
+
     Routes = tester.injector().get('Routes');
     Nav    = tester.injector().get('Nav');
     Server = tester.injector().get('Server');
@@ -85,16 +97,33 @@ describe("Midway Testing", function () {
 
           expect(tester.path()).to.equal('/');
           done();
-      })
+      });
     });
 
-    it("redirects to error when a route doesn't exist", function (done) {
+    it("has an spandex route", function (done) {
 
-      tester.visit('/non-existend', function () {
+      var promise = function() {
 
-        expect(tester.path()).to.equal('/error');
-        done();
-      });
+        jQuery.get({
+
+          'url': '/routes',
+          'async': true
+        })
+        .done(function (response) {
+
+            log(response);
+            done();
+        })
+        .fail(function (response) {
+
+          log("No data received. Check url & Karma's proxy settings. Response: " + response.status + " " + response.statusText);
+          expect(response.status).toBe(404);
+          done();
+        });
+
+      };
+
+      promise();
     });
 
     it("redirects to error when a server request fails", function (done) {

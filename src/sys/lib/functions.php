@@ -1,5 +1,7 @@
 <?php
 
+namespace Crawler;
+
 use Symfony\Component\HttpFoundation\Response;
 
 /**

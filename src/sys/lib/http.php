@@ -1,22 +1,15 @@
 <?php
 
-namespace Crawler;
+/**
+ * @usage Http\Get::url("http://example.com/");
+ */
 
-require_once 'sys/vendor/autoload.php';
+namespace Crawler\Http;
 
-/*
-
-    System
-
-*/
-
-use \Exception;
 use \Requests;
+use \Exception;
 
-class CrawlerException extends Exception {}
-
-/** Http.php **/
-/** namespace Crawler/Http; **/
+class HttpException extends Exception {}
 
 class Http {
 
@@ -165,141 +158,3 @@ class Post extends Http {
         }));
     }
 }
-
-/** Search.php **/
-/** namespace Crawler/Search **/
-
-/**
- * @uses Crawler/Http
- */
-abstract class Search {
-
-    protected $endpoint;
-    protected $query;
-
-    protected abstract function assemble ();
-
-    public function run ($dry = true) {
-
-        $data  = $this->assemble();
-
-        if (!is_array($data)) {
-
-            throw new CrawlerException('Array expected, but not received.');
-        }
-
-        $qs    = http_build_query($data);
-        $url   = $this->endpoint;
-
-        if (substr($url, -1) != '?' && !parse_url($this->endpoint, PHP_URL_QUERY)) {
-
-            $url .= '?';
-        }
-
-        if (!$dry) {
-
-            return Get::url($url.$qs);
-        }
-
-        return array($url, $qs);
-    }
-
-    public function __construct($query) {
-
-        $this->query = $query;
-    }
-}
-
-/**
- * @see  http://moz.com/ugc/the-ultimate-guide-to-the-google-search-parameters
- * @see  https://yoast.com/wp-content/uploads/2007/07/google-url-parameters.pdf
- * @see  http://www.google.com/support/enterprise/static/gsa/docs/admin/72/gsa_doc_set/xml_reference/index.html
- */
-/*
-class GoogleSearch extends Search {
-
-    protected $options = array();
-
-    public function exclude_terms ($exlude) {
-
-        $this->options['as_eq'] = $exlude;
-        return $this;
-    }
-
-    public function search_site ($site) {
-
-        $this->options['as_sitesearch'] = $site;
-        return $this;
-    }
-
-    public function find_related_to_site ($site) {
-
-        $this->options['as_rq'] = $site;
-        return $this;
-    }
-
-    public function from_country ($cc) {
-
-        $this->options['cr'] = $cc; // en|de|fr|es|jp...
-        return $this;
-    }
-
-    public function language ($lang) {
-
-        $this->options['lr'] = 'lang_'.$lang; // nl|cs|pl|da|sl...
-        return $this;
-    }
-
-    public function limit_results ($limit) {
-
-        $this->options['num'] = $limit;
-        return $this;
-    }
-
-    public function disable_personalization () {
-
-        $this->options['pws'] = 0;
-        return $this;
-    }
-
-    protected function assemble () {
-
-        // $query = urlencode($query);
-
-        $query = array(
-
-            'q' => $this->query,
-        );
-
-        return $query;
-    }
-
-    public function __construct($query) {
-
-        parent::__construct($query);
-
-        $this->endpoint     = 'http://www.google.com/search?';
-        $this->options['q'] = $query;
-    }
-}
-*/
-/*
-
-    Data & Flow
-
- */
-
-// Data
-
-$get = array(
-
-    'http://ryanmccue.info/',
-    'http://google.de'
-);
-
-// Multi
-
-Get::multi($get, function ($response, $id) {
-
-    var_dump($id);
-});

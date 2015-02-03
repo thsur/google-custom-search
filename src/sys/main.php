@@ -1,5 +1,7 @@
 <?php
 
+namespace Crawler;
+
 /**
  * Bootstrap
  */
@@ -11,8 +13,10 @@ require_once 'vendor/autoload.php';
 
 // Dependencies
 
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
+use \Silex\Application;
+use \Symfony\Component\HttpFoundation\Response;
+use \Symfony\Component\HttpFoundation\Request;
+use \Google_Client;
 
 require_once 'lib/functions.php';
 require_once 'lib/services.php';
@@ -21,18 +25,21 @@ require_once 'lib/services.php';
  * App
  */
 
-$app = new Silex\Application();
+$app = new Application();
 
-if(true){
+// Config
 
-    $app['debug'] = true;
-}
+$app['config.Google_API_Key'] = 'AIzaSyCESHNsNG50x8G_ApEgQJXVQ33wqVRFhTc';
+$app['config.Google_CSE_Key'] = '008195166369752172142:3p_pf3yx01e';
 
 // Bind services
 
-$app['filter'] = $app->share(function () {
+$app['search'] = $app->share(function ($app) {
 
-    return new Filter();
+    $client = new Google_Client();
+    $client->setDeveloperKey($app['config.Google_API_Key']);
+
+    return new GoogleSearch($client, $app['config.Google_CSE_Key']);
 });
 
 $app['storage'] = $app->share(function () {
@@ -40,48 +47,19 @@ $app['storage'] = $app->share(function () {
     return new FileStorage(__STORAGE__);
 });
 
-$app['pages'] = $app->share(function () {
-
-    return new Pages();
-});
-
-/**
- * Authentication
- *
- * We use a user/session-based approach. For a discussion, see:
- * http://stackoverflow.com/questions/319530/restful-authentication
- * https://www.owasp.org/index.php/REST_Security_Cheat_Sheet
- */
-
-// @todo
-
 // Manually boot all service providers so we can use them
 // outside of a handled request, if we need/want to.
 
 $app->boot();
 
+
+$results = $app['search']->query('Henry David Thoreau');
+var_dump($results);
+exit;
+
 /**
  * Routes
  */
-
-// Login
-
-$app->post('/login', function (Request $request) use ($app) {
-
-    $user = array(
-
-        'access' => 'null'
-    );
-
-    if(!$user || $user['access'] != 'admin'){
-
-    }
-
-    return sendError(401);
-
-    var_dump($request); exit('##');
-    return $app->json($request);
-});
 
 // Get page tree
 
