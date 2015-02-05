@@ -19,6 +19,7 @@ CREATE TABLE raw(
     queries TEXT,
     info TEXT,
     items TEXT,
+    deleted INTEGER,
     PRIMARY KEY(id)
 );
 EOT;

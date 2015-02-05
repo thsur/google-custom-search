@@ -80,91 +80,85 @@ $app['error'] = $app->share(function ($app) {
 
 $app->boot();
 
+// JSON middleware
+// Cf. http://silex.sensiolabs.org/doc/cookbook/json_request_body.html
+
+$app->before(function (Request $request) {
+
+    if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+
+        $data = json_decode($request->getContent(), true);
+        $request->request->replace(is_array($data) ? $data : array());
+    }
+});
+
 // Google Search
-
-// $query = 'Henry David Thoreau';
-// $id    = md5($query);
-
-// $results = $app['search']->query($query);
-// $app['storage']->write('queries/raw/'.$id, $results);
-
-// $all    = $app['storage']->getAll('queries/raw/');
-// $single = $app['storage']->get('queries/raw/'.$id);
-
-// var_dump($all);
-// var_dump($single);
-
-// class Query {
-
-//     protected $db;
-
-//     public function __construct($db) {
-
-//         $this->db = $db;
-//     }
-// }
-
-// var_dump(Http\Get::url("http://example.com/"));
-// exit;
-
-$request = new Request(array('query' => 'Henry David Thoreau'));
-
-$query = $request->get('query');
-$db    = $app['dbs']->queries;
-
-// $results = $app['search']->query($query);
-$results = $app['storage']->get('queries/raw/'.md5($query));
-
-$bind = array(
-
-    ':query'    => $app->escape($query),
-    ':hash'     => md5($query),
-    ':queries'  => json_encode($results['queries']), // 'nextPage','previousPage,'request'
-    ':info'     => json_encode($results['searchInformation']), // 'totalResults','formattedTotalResults'
-    ':items'    => json_encode($results['items'])
-);
-
-$vals = implode(',', array_keys($bind));
-$cols = str_replace(':', '', $vals);
-
-$sql = "insert into raw({$cols}) values({$vals})";
-$db->query($sql, $bind);
-
-$sql = "select * from raw";
-$r = $db->query($sql);
-
-// var_dump($r);
-// exit;
 
 $app->post('/search/google', function (Application $app, Request $request) {
 
-    $request = new Request(array('query' => 'Henry David Thoreau'));
+    $query   = $request->get('query');
+    $results = $app['search']->query($query);
 
-    $query = $request->get('query');
-    $query = $app->escape($query);
+    // Insert into db
 
-    $id    = md5($query);
+    $bind = array(
 
-    $db    = $app['dbs']->queries;
-    // $db->query($sql);
+        ':query'    => $app->escape($query),
+        ':hash'     => md5($query),
+        ':queries'  => json_encode($results['queries']), // 'nextPage','previousPage,'request'
+        ':info'     => json_encode($results['searchInformation']), // 'totalResults','formattedTotalResults'
+        ':items'    => json_encode($results['items'])
+    );
 
-    // $results = $app['search']->query($query);
-    $results = $app['storage']->get('queries/raw/'.$id);
+    $vals = implode(',', array_keys($bind));
+    $cols = str_replace(':', '', $vals);
 
-    // $app['storage']->write('queries/raw/'.$id, $results);
+    $db   = $app['dbs']->queries;
+    $sql  = "insert into raw({$cols}) values({$vals})";
 
-    return $app->json(array($results), 201); // 201 created
+    $db->query($sql, $bind);
+
+    return $app->json(null, 201); // 201 created
 });
 
-$app->get('/search/google/get/{id}', function (Application $app, $id) {
+$app->get('/search/google/get/{hash}', function (Application $app, $hash) {
 
-    return $app->json(null);
+    $db     = $app['dbs']->queries;
+    $sql    = "select * from raw where hash = ? and deleted is null";
+
+    $result = $db->query($sql, array($hash));
+
+    return $app->json($result);
 });
 
-$app->get('/search/google', function (Application $app, $id) {
+$app->get('/search/google/delete/{hash}', function (Application $app, $hash) {
 
-    return $app->json(null);
+    $db     = $app['dbs']->queries;
+    $sql    = "update raw set deleted = 1 where hash = ?";
 
+    $result = $db->query($sql, array($hash));
+
+    return $app->json();
+});
+
+$app->get('/search/google/recover/{hash}', function (Application $app, $hash) {
+
+    $db     = $app['dbs']->queries;
+    $sql    = "update raw set deleted = null where hash = ?";
+
+    $result = $db->query($sql, array($hash));
+
+    return $app->json();
+});
+
+$app->get('/search/google', function (Application $app) {
+
+    $db     = $app['dbs']->queries;
+    $sql    = "select hash, query from raw where deleted is null group by hash";
+
+    $result = $db->query($sql);
+
+    return $app->json($result);
 });
 
 /**
