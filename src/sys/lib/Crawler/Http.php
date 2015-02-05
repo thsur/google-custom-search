@@ -28,7 +28,7 @@ class Get extends Http {
     /**
      * @return Requests_Response
      */
-    public static function url ($url, $headers = array()) {
+    public static function url($url, $headers = array()) {
 
         $headers  = empty($headers) ? self::$options['single']['headers'] : $headers;
         $response = null;
@@ -50,7 +50,7 @@ class Get extends Http {
      * @param  Function - $callback
      * @return Array    - Requests_Response|Requests_Exception, $urls array id
      */
-    public static function multi (Array $urls, $callback) {
+    public static function multi(Array $urls, $callback) {
 
         $requests = array();
 
@@ -85,7 +85,7 @@ class Post extends Http {
     /**
      * @return Requests_Response|Requests_Exception
      */
-    public static function data ($url, $data) {
+    public static function data($url, $data) {
 
         $response = null;
 
@@ -104,7 +104,7 @@ class Post extends Http {
     /**
      * @return Requests_Response|Requests_Exception
      */
-    public static function json ($url, $data) {
+    public static function json($url, $data) {
 
         $response = null;
 
@@ -125,7 +125,7 @@ class Post extends Http {
      * @param  Function - $callback
      * @return Array    - Requests_Response|Requests_Exception, $urls array id
      */
-    public static function multi (Array $urls, $callback) {
+    public static function multi(Array $urls, $callback) {
 
         $requests = array();
 

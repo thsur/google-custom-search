@@ -15,7 +15,7 @@ end
 
 desc 'Setup directory structure.'
 task :init_dirs do
-  sh 'mkdir --parents bin dist src/storage src/sys src/public'
+  sh 'mkdir --parents bin dist src/storage src/sys/test src/public'
 end
 
 desc 'Install Composer.'
@@ -47,6 +47,12 @@ task :install_angular do
   end
 end
 
+desc 'Install PHPUnit.'
+task :install_phpunit do
+  sh 'wget https://phar.phpunit.de/phpunit.phar'
+  sh 'chmod +x phpunit.phar'
+end
+
 # Package managers
 
 desc 'Update Composer packages.'
@@ -64,7 +70,23 @@ task :update_gems do
   sh 'bundle update --verbose'
 end
 
+# Testing
+
+desc 'Run Silex tests with PHPUnit.'
+task :test_server do
+  begin
+    sh 'phpunit.phar --no-globals-backup src/sys/test/'
+  rescue => e
+    puts 'Task failed.'
+  end
+end
+
 # Maintenance
+
+desc 'Update PHP autoload.'
+task :update_autoload do
+  sh 'composer.phar dump-autoload'
+end
 
 desc 'Backup everything inside and below the current folder into backup.tar.gz.'
 task :backup do

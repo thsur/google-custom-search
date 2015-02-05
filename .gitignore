@@ -1,5 +1,6 @@
 
-src/storage
+src/storage/config.yml
+
 src/sys/vendor
 src/public/node_modules
 src/public/app/bower_components
