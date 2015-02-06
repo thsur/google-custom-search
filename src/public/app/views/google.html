@@ -27,9 +27,34 @@
           </div>
         </div>
       </fieldset>
+      <fieldset>
+        <legend class="text-muted">Saved Searches</legend>
+        <div class="form-group">
+          <div class="col-sm-12">
+            <ul class="list-inline">
+              <li ng-repeat="query in queries">
+                <button ng-click="loadQuery(query.hash)" class="btn btn-sm">{{query.query}}</button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </fieldset>
     </form>
-
   </div>
 
-</form>
+  <div ng-show="results" class="results panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title inline">{{results.query}} <small>({{results.info.formattedTotalResults}} results)</small></h4>
+    </div>
+    <div class="items panel-body">
+      <ul>
+        <li ng-repeat="item in results.items">
+          <h4><small>{{item.title}}</small></h4>
+          <p>{{item.snippet}}</p>
+          <div>{{item.link}}</div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
 </div>

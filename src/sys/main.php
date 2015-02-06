@@ -124,7 +124,7 @@ $app->post('/search/google', function (Application $app, Request $request) {
 $app->get('/search/google/get/{hash}', function (Application $app, $hash) {
 
     $db     = $app['dbs']->queries;
-    $sql    = "select * from raw where hash = ? and deleted is null";
+    $sql    = "select * from raw where hash = ? and deleted is null limit 1";
 
     $result = $db->query($sql, array($hash));
 

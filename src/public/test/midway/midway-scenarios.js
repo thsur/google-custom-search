@@ -100,32 +100,6 @@ describe("Midway Testing", function () {
       });
     });
 
-    it("has an spandex route", function (done) {
-
-      var promise = function() {
-
-        jQuery.get({
-
-          'url': '/routes',
-          'async': true
-        })
-        .done(function (response) {
-
-            log(response);
-            done();
-        })
-        .fail(function (response) {
-
-          log("No data received. Check url & Karma's proxy settings. Response: " + response.status + " " + response.statusText);
-          expect(response.status).toBe(404);
-          done();
-        });
-
-      };
-
-      promise();
-    });
-
     it("redirects to error when a server request fails", function (done) {
 
       Server
@@ -139,9 +113,12 @@ describe("Midway Testing", function () {
     });
   });
 
-  describe("Access", function () {
+  describe("Google", function () {
 
-    it("redirects to login when the server responds with a 401", function (done) {
+    var controller,
+        scope;
+
+    xit("redirects to login when the server responds with a 401", function (done) {
 
       Server
         .post('/login', [])
@@ -153,10 +130,6 @@ describe("Midway Testing", function () {
         });
     });
 
-    it("redirects to login when a access-restricted route responds with a 401");
-
-    // Route has visibility settings
-    // Element has visibility settings
-    // User has access rights
+    xit("redirects to login when a access-restricted route responds with a 401");
   })
 });

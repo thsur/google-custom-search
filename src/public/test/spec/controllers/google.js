@@ -38,31 +38,7 @@ describe('Controller: Google', function () {
 
   describe("Search", function () {
 
-    it('should do something', function (done) {
+    xit('should do something', function () {});
 
-      var promise = function() {
-
-        jQuery.get({
-
-          'url': 'connect.php/routes',
-          'async': true
-        })
-        .done(function (response) {
-
-            log(response);
-            done();
-        })
-        .fail(function (response) {
-
-          log("No data received. Check url & Karma's proxy settings. Response: " + response.status + " " + response.statusText);
-          expect(response.status).toBe(404);
-          done();
-        });
-
-      };
-
-      promise();
-      // expect(4).toBe(3);
-    });
   });
 });

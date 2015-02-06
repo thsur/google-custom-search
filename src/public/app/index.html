@@ -33,9 +33,10 @@
 
     <!-- Set a base, required for '#'-less urls -->
     <script>
-        var base = window.location.pathname.match(/^.*\/app\W/);
-        document.write('<base href="' + base + '">');
+        var base = window.location.pathname.match(/^.*\/app\//);
+        document.write("<base href='http://" + document.location.host + base + "' />");
     </script>
+
     <!-- <base href="/_crawler/src/public/app/"> -->
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css styles/vendor.css -->
@@ -81,7 +82,6 @@
           </ul>
         </nav>
       </header>
-
       <section class="main" ng-view ng-cloak></section>
 
       <footer ng-controller="Footer">
@@ -92,14 +92,6 @@
 
     <!-- When we're busy loading. Directive is a stub. No CSS attached. -->
     <butterbar class="modal" style="position: absolute; top: 10px;">Loading...</butterbar>
-
-    <!--
-    <butterbar class="modal" ng-show="loading">
-        <ul id="loading">
-            <li class="bar" ng-repeat="i in [0,1,2]"></li>
-        </ul>
-    </butterbar>
-    -->
 
     <!--[if lt IE 9]>
     <script src="bower_components/es5-shim/es5-shim.js"></script>
@@ -130,6 +122,7 @@
     <script src="scripts/core/services/nav.js"></script>
     <script src="scripts/core/directives/ui.js"></script>
     <script src="scripts/core/directives/butterbar.js"></script>
+    <script src="scripts/core/filters/url.js"></script>
     <script src="scripts/controllers/app.js"></script>
     <script src="scripts/controllers/main.js"></script>
     <script src="scripts/controllers/error.js"></script>

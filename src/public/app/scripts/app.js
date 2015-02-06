@@ -37,6 +37,7 @@ var log = (function (console) {
       'http',
       'routes',
       'navigation',
+      'filters',
       'ui',
       'butterbar',
       'messages',
@@ -90,8 +91,10 @@ var log = (function (console) {
     var core = {login: '/login', error: '/error'};
 
     // Don't append a '#' to urls
-
-    $locationProvider.html5Mode(true);
+    //
+    // Unless this issue get solved, we need to switch off html5mode:
+    // @see https://github.com/angular/angular.js/issues/1388
+    $locationProvider.html5Mode(false);
 
     // Add core routes
 
