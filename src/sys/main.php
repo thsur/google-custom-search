@@ -31,7 +31,7 @@ $app = new Application();
 
 // Config
 
-$config = Yaml::parse(file_get_contents(__STORAGE__.'/config.yml'));
+$config = Yaml::parse(file_get_contents(__STORAGE__.'/config.sample.yml'));
 
 foreach ($config as $key => $value) {
 

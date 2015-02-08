@@ -101,15 +101,42 @@ end
 
 # Git
 
-desc 'Stage changes to git. Auto-remove deleted files.'
-task :stage do
+namespace :git do
 
-  # http://tylerfrankenstein.com/code/how-git-rm-all-deleted-files-shown-git-status
-  # http://www.cyberciti.biz/faq/bash-scripting-using-awk/
+  desc 'Stage changes to git. Auto-remove deleted files.'
+  task :stage do
 
-  del = `git status --porcelain | awk '/^(\sD|DD)/ {print $2}'`
+    # http://tylerfrankenstein.com/code/how-git-rm-all-deleted-files-shown-git-status
+    # http://www.cyberciti.biz/faq/bash-scripting-using-awk/
 
-  sh "git rm #{del}" if File.exists? del
-  sh 'git add .'
-  sh 'git status'
+    del = `git status --porcelain | awk '/^(\sD|DD)/ {print $2}'`
+
+    sh "git rm #{del}" if File.exists? del
+    sh 'git add .'
+    sh 'git status'
+  end
+
+  desc 'Print decorated log of the last four commits made.'
+  task :log do
+
+    sh "git log -n 4 --decorate --pretty=short --abbrev-commit --notes"
+  end
+
+  desc 'List affected files for a commit given as "rake git:files sha=[...]".'
+  task :files do
+
+    # For one technique of passing command line arguments see:
+    # http://stackoverflow.com/a/5050412
+    sha = ENV['sha']
+
+    # http://stackoverflow.com/a/424142
+    sh "git show --pretty='format:' --name-status #{sha}"
+  end
+
+  desc 'List current or stats for a commit given as "rake git:stats sha=[...]".'
+  task :stats do
+
+    sha = ENV['sha']
+    sh "git diff --stat #{sha}"
+  end
 end

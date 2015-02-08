@@ -41,7 +41,8 @@ var log = (function (console) {
       'ui',
       'butterbar',
       'messages',
-      'errors'
+      'errors',
+      'google'
     ],
 
     navigation: ['routes'],

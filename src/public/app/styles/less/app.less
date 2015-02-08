@@ -1,0 +1,79 @@
+
+@import "default.less";
+@import "../../bower_components/bootstrap/less/variables.less";
+
+@padding-top-default: 10px;
+
+.tab-content {
+
+    padding-top: @padding-top-default;
+}
+
+.btn:focus {
+
+    outline-style: none;
+}
+
+/**
+ * Google Search
+ */
+
+#google_main {
+
+    .nav-tabs {
+
+        .badge {
+
+            transform: translateY(-1px);
+            margin-left: 4px;
+        }
+    }
+}
+
+.results {
+
+    .page-header {
+
+        margin-top: @padding-top-default;
+
+        h1 {
+
+            margin-top: 0;
+        }
+    }
+
+    h2 {
+
+        padding-top: @padding-top-default;
+        margin-top: 0;
+        margin-bottom: @padding-top-default * 1.5;
+        border-bottom: 1px solid @gray-lighter;
+    }
+
+    ul {
+
+        list-style-type: none;
+        margin-left: 0;
+        padding-left: 0;
+    }
+
+    li {
+
+        padding-top: @padding-top-default;
+    }
+
+    .panel-footer {
+
+        padding: 5px 5px;
+        background-color: rgb(100%,100%,100%);
+
+        text-align: right;
+
+        button {
+
+            display: inline-block;
+        }
+    }
+}
+
+
