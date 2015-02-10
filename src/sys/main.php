@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @todo Tag-System
+ */
+
 namespace Crawler;
 
 /**
@@ -23,7 +27,7 @@ use \Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Yaml\Yaml;
 use \Google_Client;
 
-/**
+/*
  * App
  */
 
@@ -75,6 +79,12 @@ $app['error'] = $app->share(function ($app) {
     return new Service\Error($app);
 });
 
+$app['tags'] = $app->share(function ($app) {
+
+    $storage = $app['storage'];
+    return new Service\Tags($storage, 'tags');
+});
+
 // Manually boot all service providers so we can use them
 // outside of a handled request, if we need/want to.
 
@@ -91,6 +101,54 @@ $app->before(function (Request $request) {
         $request->request->replace(is_array($data) ? $data : array());
     }
 });
+
+/**
+ * Tag routes
+ */
+
+// Get all tags
+
+$app->get('/tags', function (Application $app) {
+
+    $result = $app['tags']->get();
+    return $app->json($result);
+});
+
+// Get tags filed under a key
+
+$app->get('/tags/get/{key}', function (Application $app, $key) {
+
+    $result = array($key => $app['tags']->get($key));
+    return $app->json($result);
+});
+
+// Set a tag
+
+$app->get('/tags/set/{key}/{tag}', function (Application $app, $key, $tag) {
+
+    $app['tags']->set($key, $tag);
+    return $app->json();
+});
+
+// Remove a tag
+
+$app->get('/tags/remove/{key}/{tag}', function (Application $app, $key, $tag) {
+
+    $app['tags']->remove($key, $tag);
+    return $app->json();
+});
+
+// Remove a key
+
+$app->get('/tags/remove/{key}', function (Application $app, $key) {
+
+    $app['tags']->remove($key);
+    return $app->json();
+});
+
+/**
+ * Google routes
+ */
 
 // Google Search
 
@@ -121,6 +179,8 @@ $app->post('/search/google', function (Application $app, Request $request) {
     return $app->json(null, 201); // 201 created
 });
 
+// Get a saved search
+
 $app->get('/search/google/get/{hash}', function (Application $app, $hash) {
 
     $db     = $app['dbs']->queries;
@@ -131,25 +191,7 @@ $app->get('/search/google/get/{hash}', function (Application $app, $hash) {
     return $app->json($result);
 });
 
-$app->get('/search/google/delete/{hash}', function (Application $app, $hash) {
-
-    $db     = $app['dbs']->queries;
-    $sql    = "update raw set deleted = 1 where hash = ?";
-
-    $result = $db->query($sql, array($hash));
-
-    return $app->json();
-});
-
-$app->get('/search/google/recover/{hash}', function (Application $app, $hash) {
-
-    $db     = $app['dbs']->queries;
-    $sql    = "update raw set deleted = null where hash = ?";
-
-    $result = $db->query($sql, array($hash));
-
-    return $app->json();
-});
+// Get all saved searches
 
 $app->get('/search/google', function (Application $app) {
 
@@ -161,8 +203,32 @@ $app->get('/search/google', function (Application $app) {
     return $app->json($result);
 });
 
+// Delete a saved search
+
+$app->get('/search/google/delete/{hash}', function (Application $app, $hash) {
+
+    $db     = $app['dbs']->queries;
+    $sql    = "update raw set deleted = 1 where hash = ?";
+
+    $result = $db->query($sql, array($hash));
+
+    return $app->json();
+});
+
+// Un-delete a saved search
+
+$app->get('/search/google/recover/{hash}', function (Application $app, $hash) {
+
+    $db     = $app['dbs']->queries;
+    $sql    = "update raw set deleted = null where hash = ?";
+
+    $result = $db->query($sql, array($hash));
+
+    return $app->json();
+});
+
 /**
- * Routes
+ * Core routes
  */
 
 // Get page tree
@@ -201,10 +267,13 @@ $app->match('{url}', function(Application $app, Request $request) {
 
 })->assert('url', '.*');
 
-// Start dispatching incoming requests
+/**
+ * Main
+ */
 
 if (php_sapi_name() != 'cli') {
 
+    // Start dispatching incoming requests
     $app->run();
 }
 

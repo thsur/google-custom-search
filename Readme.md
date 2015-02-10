@@ -1,8 +1,17 @@
+# Annotated Google Search
+
+## What it does
+
+...
+
 ## Requirements
 
 PHP > 5.5 with SQLite3 
 
 ## Making it work
+
+In case you want more than just browse the code.
+
 ### Obtain keys
 
 You'll need two keys to be able to query Google's Custom Search API:
@@ -27,8 +36,13 @@ So, the steps are:
 5. Sign in to https://www.google.com/cse and create a Custom Search Engine (CSE).
 6. Configure the CSE to search the entire web.
 7. Copy & paste the CSE id into storage/config.sample.yml (as `Google_CSE_Key`).
-8. Rename storage/config.sample.yml to storage/config.yml    
+8. Rename storage/config.sample.yml to storage/config.yml
+9. Hit your browser with /path/to/app    
 
 ### When on Windows
 
 On Windows, you may need to activate the SQLite3 dll, see http://php.net/manual/en/sqlite3.installation.php.
+
+## License
+
+GNU GPL v2

@@ -2,43 +2,180 @@
 
 describe('Controller: Google', function () {
 
-
-  var Controller;
+  var Server;
 
   var scope,
+      $httpBackend,
       $rootScope,
       $location;
+
+  var controllerFactory;
 
   beforeEach(module('app'));
 
   beforeEach(
-    inject(function ($controller, _$rootScope_, _$location_, _$httpBackend_) {
+    inject(function ($controller, _$rootScope_, _$location_, _$httpBackend_, _Server_) {
 
-      $rootScope = _$rootScope_;
-      $location  = _$location_;
+      $httpBackend = _$httpBackend_;
+      $rootScope   = _$rootScope_;
+      $location    = _$location_;
 
-      // Initialize the controller and a mock scope
+      Server = _Server_;
 
-      scope      = $rootScope.$new();
-      Controller = $controller('Google', {
+      // For easier testing, unset endpoint on Server
 
-        $scope: scope
-      });
+      Server.init({ endpoint: '' });
+
+      // Initialize a mock scope
+
+      scope = $rootScope.$new();
+
+      // Provide a factory function for the controller
+
+      controllerFactory = function() {
+
+        return $controller('Google', {
+
+          '$scope': scope,
+          'Server': Server
+        });
+      };
     })
   );
 
-  beforeEach(function () {
+  describe("Requests", function () {
 
-    // Expect controller to have a model defined
-    expect(scope.query).toBeDefined();
+    afterEach(function() {
 
-    // Set it up, i.e. mock a search
-    scope.query = 'my search';
+       $httpBackend.verifyNoOutstandingExpectation();
+       $httpBackend.verifyNoOutstandingRequest();
+    });
+
+    it('loads a list of saved queries when instantiated', function () {
+
+      /**
+       * The controller issues more than one request on startup, which may
+       * cause an 'unexpected request' error - unless we make sure every
+       * request is handled und thus expected.
+       *
+       * @see http://stackoverflow.com/a/22405251/3323348
+       */
+      $httpBackend.whenGET('/tags').respond(200, [{}]);
+
+      $httpBackend.expectGET('/search/google').respond(200, [{}]);
+      controllerFactory();
+      $httpBackend.flush();
+
+      expect(scope.queries).toEqual([{}]);
+    });
+
+    it('loads a list of tags when instantiated', function () {
+
+      /**
+       * The controller issues more than one request on startup, which may
+       * cause an 'unexpected request' error - unless we make sure every
+       * request is handled und thus expected.
+       *
+       * @see http://stackoverflow.com/a/22405251/3323348
+       */
+      $httpBackend.whenGET('/search/google').respond(200, [{}]);
+
+      $httpBackend.expectGET('/tags').respond(200, [{}]);
+      controllerFactory();
+      $httpBackend.flush();
+
+      expect(scope.tags).toEqual([{}]);
+    });
+
+    xit('sends a Google query to the server', function () {});
+    xit('sends a changed result set to the server (result, collected items, trash)', function () {});
   });
 
-  describe("Search", function () {
+  describe("Results", function () {
 
-    xit('should do something', function () {});
+    var Controller;
 
+    beforeEach(inject(function ($controller) {
+
+      Controller = controllerFactory();
+
+      // Mock a result set
+
+      scope.results = {
+
+        items: [{}, {}, {}]
+      };
+    }));
+
+    it('collects query result items by substracting them from the result set', function () {
+
+      var len_results = scope.getResults().length;
+
+      expect(scope.hasCollected()).toBe(false);
+
+      scope.collectQueryItem(0, {});
+
+      expect(scope.hasCollected()).toBe(true);
+      expect(scope.getResults().length).toEqual(len_results - 1);
+    });
+
+    it('pushes back collected items into the result set', function () {
+
+      var len_results;
+
+      scope.collectQueryItem(0, {});
+
+      expect(scope.hasCollected()).toBe(true);
+      len_results = scope.getResults().length;
+
+      scope.removeCollectedItem(0, {});
+
+      expect(scope.hasCollected()).toBe(false);
+      expect(scope.getResults().length).toEqual(len_results + 1);
+    });
+
+    it('deletes a result set item into the trash', function () {
+
+      var len_results = scope.getResults().length;
+
+      expect(scope.hasTrash()).toBe(false);
+
+      scope.deleteQueryItem(0, {});
+
+      expect(scope.hasTrash()).toBe(true);
+      expect(scope.getResults().length).toEqual(len_results - 1);
+    });
+
+    it('restores an item from trash back into the result set', function () {
+
+      var len_results;
+
+      scope.deleteQueryItem(0, {});
+
+      expect(scope.hasTrash()).toBe(true);
+      len_results = scope.getResults().length;
+
+      scope.restoreQueryItem(0, {});
+
+      expect(scope.hasTrash()).toBe(false);
+      expect(scope.getResults().length).toEqual(len_results + 1);
+    });
+
+    it('empties the trash, thus reducing the result set', function () {
+
+      var len_results;
+
+      scope.deleteQueryItem(0, {});
+
+      expect(scope.hasTrash()).toBe(true);
+      len_results = scope.getResults().length;
+
+      scope.emptyTrash();
+
+      expect(scope.hasTrash()).toBe(false);
+      expect(scope.getResults().length).toEqual(len_results);
+    });
+
+    xit('tags a collected item');
   });
 });

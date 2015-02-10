@@ -1,0 +1,11 @@
+# routes.yml
+#
+Routes:
+  -
+    title: Start
+    url: ~
+    view: views/main.html
+  -
+    title: Search
+    url: /google
+    view: views/google.html

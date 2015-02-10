@@ -75,7 +75,7 @@ end
 desc 'Run Silex tests with PHPUnit.'
 task :test_server do
   begin
-    sh 'phpunit.phar --no-globals-backup src/sys/test/'
+    sh './phpunit.phar --no-globals-backup src/sys/test/'
   rescue => e
     puts 'Task failed.'
   end

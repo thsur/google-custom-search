@@ -28,6 +28,14 @@
            ng-show="collected.length"
            data-toggle="tab">Collected <span class="badge">{{collected.length}}</span></a>
       </li>
+      <li role="presentation">
+        <a href="javascript:void(0)"
+           data-target="#trash"
+           aria-controls="trash"
+           role="tab"
+           ng-show="trash.length"
+           data-toggle="tab">Trash <span class="badge">{{trash.length}}</span></a>
+      </li>
     </ul>
 
     <!-- Tab panes -->
@@ -109,13 +117,13 @@
             <div>{{item.link}}</div>
           </div>
           <div class="panel-footer">
-            <button type="button" class="btn btn-sm btn-danger" ng-click="deleteQueryItem(key,item)">Delete</button>
+            <button type="button" class="btn btn-sm btn-warning" ng-click="deleteQueryItem(key,item)">Trash</button>
             <button type="button" class="btn btn-sm btn-primary" ng-click="collectQueryItem(key,item);">Collect</button>
           </div>
         </div>
       </div>
 
-      <div role="tabpanel" class="tab-pane results" id="collected">
+      <div role="tabpanel" class="tab-pane collected" id="collected">
 
         <div class="panel panel-default" ng-repeat="(key, item) in collected">
           <div class="panel-heading">
@@ -131,6 +139,21 @@
         </div>
       </div>
 
+      <div role="tabpanel" class="tab-pane trash" id="trash">
+
+        <div class="panel panel-default" ng-repeat="(key, item) in trash">
+          <div class="panel-heading">
+            <h3 class="panel-title"><a ng-href="{{item.link}}">{{item.title}}</a></h3>
+          </div>
+          <div class="panel-body">
+            <p>{{item.snippet}}</p>
+            <div>{{item.link}}</div>
+          </div>
+          <div class="panel-footer">
+            <button type="button" class="btn btn-sm btn-primary" ng-click="restoreQueryItem(key,item)">Restore</button>
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>

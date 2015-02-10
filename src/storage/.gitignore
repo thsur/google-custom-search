@@ -1,3 +1,5 @@
 *
 !.gitignore
 !config.sample.yml
+!routes.yml
+!tags.yml

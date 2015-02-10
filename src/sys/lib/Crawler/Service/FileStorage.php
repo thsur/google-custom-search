@@ -134,11 +134,13 @@ class FileStorage{
 
     /**
      * Write an array as YAML into a file.
+     * Keeps leading comments intact.
      *
-     * @param  String $file - file name *without* extension
-     * @return Array        - array of contents
+     * @param  String  - file name *without* extension
+     * @param  Array   - array of contents
+     * @param  Boolean - pretty print contents (instead of dumping them as a one-liner)
      */
-    public function write($name, Array $contents){
+    public function write($name, Array $contents, $pretty = false){
 
         $fs   = new Filesystem();
         $path = $this->getStorage($name);
@@ -154,8 +156,34 @@ class FileStorage{
 
         // Contents to YAML
 
-        $dumper = new Dumper();
-        $yaml   = $dumper->dump($contents);
+        $dumper  = new Dumper();
+
+        if ($pretty) {
+
+            $yaml = $dumper->dump($contents, 99);
+        }
+        else {
+
+            $yaml = $dumper->dump($contents);
+        }
+
+        // Keep leading comments
+
+        $current  = file($file, FILE_SKIP_EMPTY_LINES);
+        $comments = array();
+
+        if (!empty($current) && strpos($current[0], '#') === 0) {
+
+            $line = array_shift($current);
+
+            while ($line && strpos($line, '#') === 0) {
+
+                $comments[] = $line;
+                $line       = array_shift($current);
+            }
+
+            $yaml = implode('', $comments).$yaml;
+        }
 
         // Write it out
 

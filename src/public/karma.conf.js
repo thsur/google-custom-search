@@ -28,6 +28,7 @@ module.exports = function(config, type) {
 
     default:
       files = files.concat([
+
         'test/spec/**/*.js'
       ]);
       break;
