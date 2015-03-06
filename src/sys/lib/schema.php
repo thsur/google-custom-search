@@ -10,7 +10,7 @@ global $create; // Required for phpunit, see http://stackoverflow.com/a/9675013
 $create = array();
 
 /**
- * @todo  Create table 'queries' (hash, query, queries, info, deleted)
+ * @todo  Create table 'queries' (hash, query, deleted)
  * @todo  Rename table 'results' (hash, items)
  * @todo  Create table 'collected' (hash, items)
  * @todo  Create table 'trash' (hash, items)

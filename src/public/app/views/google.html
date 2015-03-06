@@ -134,7 +134,36 @@
             <div>{{item.link}}</div>
           </div>
           <div class="panel-footer">
-            <button type="button" class="btn btn-sm btn-primary" ng-click="removeCollectedItem(key,item)">Reject</button>
+            <button type="button" class="btn btn-sm btn-warning" ng-click="removeCollectedItem(key,item)">Reject</button>
+            <button type="button"
+                    class="btn btn-sm btn-primary"
+                    data-toggle="collapse"
+                    data-target="#tags"
+                    aria-expanded="false"
+                    aria-controls="tags">
+              Tag
+            </button>
+            <div class="tags collapse" id="tags">
+              <form x-form-utils class="form-horizontal">
+
+                <fieldset class="form-group">
+                  <div class="col-sm-12">
+                    <input class="form-control input-lg" placeholder="Add a tag" ng-model="item.tags">
+                  </div>
+                </fieldset>
+
+                <fieldset class="form-group">
+                  <div class="col-sm-12">
+                    <ul class="list-inline">
+                      <li ng-repeat="tag in tags.main">
+                        <button ng-click="" class="btn btn-default btn-sm">{{tag}}</button>
+                      </li>
+                    </ul>
+                  </div>
+                </fieldset>
+
+              </form>
+            </div>
           </div>
         </div>
       </div>
