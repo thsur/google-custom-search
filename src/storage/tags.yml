@@ -5,9 +5,9 @@
 # for example, uncomment them - those would be gone).
 #
 main:
-    - one
-    - two
-    - three
+    - add
+    - some
+    - tags
 subsidiary:
     - simplex
     - com_plex

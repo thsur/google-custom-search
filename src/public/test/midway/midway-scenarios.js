@@ -112,24 +112,4 @@ describe("Midway Testing", function () {
         });
     });
   });
-
-  describe("Google", function () {
-
-    var controller,
-        scope;
-
-    xit("redirects to login when the server responds with a 401", function (done) {
-
-      Server
-        .post('/login', [])
-        .catch(function (response) {
-
-          expect(response.status).to.equal(401);
-          expect(tester.path()).to.equal('/login');
-          done();
-        });
-    });
-
-    xit("redirects to login when a access-restricted route responds with a 401");
-  })
 });

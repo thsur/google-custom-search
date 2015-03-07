@@ -2,14 +2,14 @@
 
 angular.module('app').controller('Google', function ($scope, Server){
 
-  var query     = {q: ''};
+  $scope.query     = {q: ''};
 
-  var queries   = {};
-  var results   = {};
-  var tags      = {};
+  $scope.queries   = {};
+  $scope.results   = {};
+  $scope.tags      = {};
 
-  var collected = [];
-  var trash     = [];
+  $scope.collected = [];
+  $scope.trash     = [];
 
   // Load saved searches
 
@@ -30,15 +30,6 @@ angular.module('app').controller('Google', function ($scope, Server){
     });
 
   // API
-
-  $scope.query     = query;
-
-  $scope.queries   = queries;
-  $scope.results   = results;
-  $scope.tags      = tags;
-
-  $scope.collected = collected;
-  $scope.trash     = trash;
 
   /**
    * Adds a query snippet
@@ -71,6 +62,11 @@ angular.module('app').controller('Google', function ($scope, Server){
 
       $scope.results.info  = angular.fromJson($scope.results.info);
       $scope.results.items = angular.fromJson($scope.results.items);
+
+      _.each($scope.results.items, function (elem) {
+
+        elem.tags = elem.tags || {};
+      })
 
       if (angular.isFunction(callback)) {
 
@@ -168,4 +164,48 @@ angular.module('app').controller('Google', function ($scope, Server){
 
     return !!$scope.trash.length;
   };
+
+  /**
+   * Add or remove a tag to or from a collected item
+   */
+
+  $scope.toggleTag = function (key, tag) {
+
+    var item = $scope.collected[key];
+
+    item.tags      = item.tags || {};
+    item.tags[tag] = item.tags[tag] ? false : true;
+
+    if (!item.tags[tag]) {
+
+      delete item.tags[tag];
+    }
+  };
+
+  /**
+   * Save all data sets.
+   */
+
+  $scope.save = function (callback) {
+
+    var send = {
+
+      hash: $scope.results.hash,
+      results: $scope.results,
+      collected: $scope.collected,
+      trash: $scope.trash
+    };
+
+    log(send);
+
+    Server
+    .get('/tags')
+    .success(function(data, status) {
+
+      if (angular.isFunction(callback)) {
+
+        callback();
+      }
+    });
+  }
 });

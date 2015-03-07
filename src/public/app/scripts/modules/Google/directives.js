@@ -4,7 +4,7 @@
 /**
  * @requires bootstrap.js
  */
-angular.module('google').directive('google', function () {
+angular.module('google').directive('googleTabs', function () {
 
   return {
 
@@ -23,7 +23,8 @@ angular.module('google').directive('google', function () {
         }
       });
 
-      // Watch collections for changes to switch tabs accordingly.
+      // Watch tabs. If a tab's data sets shrinks to zero,
+      // switch to an appropriate alternative tab.
 
       var switch_tabs = function (from) {
 
@@ -52,9 +53,7 @@ angular.module('google').directive('google', function () {
           switch_to = tabs[name];
         }
 
-        log(name, switch_to);
-
-        scope.switchTab(switch_to);
+        scope.switchTab(switch_to); // Call x-ui-util's switchTab()
       };
 
       var changedToEmpty = function (collection, new_val, old_val) {
@@ -88,22 +87,69 @@ angular.module('google').directive('google', function () {
           switch_tabs('trash');
         }
       });
+    }
+  };
+});
 
-      /*
-      scope.$watchCollection('collected', function (new_val, old_val) {
+angular.module('google').directive('tags', function () {
 
-        var empty   = !scope.collected.length;
-        var changed = (new_val !== old_val);
+  return {
 
-        if (changed && empty) {
+    restrict: 'A',
+    scope: true,
+    link: function(scope, element, attrs) {
 
-          if (scope.hasResults()) {
+      var item = scope.item;
+      var tag  = scope.tag;
 
-            scope.switchTab(1);
-          }
-        }
+      if (item.tags && item.tags[tag]) {
+
+        element.addClass('active'); // ng-class won't work here due to a conflict with Bootstrap (both would set .active,
+                                    // but at least one of them only seems to toggle it, resulting in an active element
+                                    // turned inactive).
+      }
+    }
+  };
+});
+
+angular.module('google').directive('autosave', function ($interval) {
+
+  return {
+
+    restrict: 'A',
+    scope: true,
+    link: function(scope, element, attrs) {
+
+      var interval = 60 * 5 * 1000; // Autosave every 5 minutes
+
+      if (!scope.autosave) {
+
+        scope.autosave = $interval(function () {
+
+          var buttons = $('button.save').button('loading');
+
+          scope.save(function () {
+
+            buttons.button('reset');
+          });
+
+        }, interval);
+
+        scope.$on('$destroy', function () {
+
+          $interval.cancel(scope.autosave);
+        });
+      }
+
+      element.on('click', function () {
+
+        var button = $(this).button('loading');
+
+        scope.save(function () {
+
+          button.button('reset');
+        });
       });
-      */
     }
   };
 });

@@ -227,6 +227,34 @@ $app->get('/search/google/recover/{hash}', function (Application $app, $hash) {
     return $app->json();
 });
 
+// Store a search
+
+$app->post('/search/store', function (Application $app, Request $request) {
+
+    $query   = $request->get('query');
+    $results = $app['search']->query($query);
+
+    // Insert into db
+
+    $bind = array(
+
+        ':query'    => $app->escape($query),
+        ':hash'     => md5($query),
+        ':queries'  => json_encode($results['queries']), // 'nextPage','previousPage,'request'
+        ':info'     => json_encode($results['searchInformation']), // 'totalResults','formattedTotalResults'
+        ':items'    => json_encode($results['items'])
+    );
+
+    $vals = implode(',', array_keys($bind));
+    $cols = str_replace(':', '', $vals);
+
+    $db   = $app['dbs']->queries;
+    $sql  = "insert into raw({$cols}) values({$vals})";
+
+    $db->query($sql, $bind);
+
+    return $app->json(null, 201); // 201 created
+});
 /**
  * Core routes
  */

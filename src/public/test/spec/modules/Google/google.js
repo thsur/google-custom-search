@@ -176,6 +176,19 @@ describe('Controller: Google', function () {
       expect(scope.getResults().length).toEqual(len_results);
     });
 
-    xit('tags a collected item');
+    it('adds and removes tags to a collected item', function () {
+
+      scope.collectQueryItem(0, {});
+
+      scope.toggleTag(0, 'a_tag');
+      scope.toggleTag(0, 'b_tag');
+
+      expect(scope.collected[0].tags['a_tag']).toBeDefined();
+      expect(scope.collected[0].tags['b_tag']).toBeDefined();
+
+      scope.toggleTag(0, 'b_tag');
+
+      expect(scope.collected[0].tags['b_tag']).not.toBeDefined();
+    });
   });
 });

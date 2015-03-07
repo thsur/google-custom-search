@@ -1,9 +1,10 @@
 
-<div x-ui-utils x-google ng-controller="Google" id="google_main">
+<div x-ui-utils x-google-tabs ng-controller="Google" id="google_main">
 
   <div role="tabpanel" class="tabpanel">
 
     <!-- Nav tabs -->
+
     <ul class="nav nav-tabs" role="tablist">
       <li role="presentation" class="active">
         <a href="javascript:void(0)"
@@ -39,7 +40,11 @@
     </ul>
 
     <!-- Tab panes -->
+
     <div class="tab-content">
+
+      <!-- Search -->
+
       <div role="tabpanel" class="tab-pane active" id="search">
         <div class="jumbotron">
 
@@ -104,6 +109,8 @@
         </div>
       </div>
 
+      <!-- Results -->
+
       <div role="tabpanel" class="tab-pane results" ng-show="results.items.length" id="items">
         <div class="page-header">
           <h1><small>{{results.query}}</small></h1>
@@ -116,12 +123,15 @@
             <p>{{item.snippet}}</p>
             <div>{{item.link}}</div>
           </div>
+
           <div class="panel-footer">
             <button type="button" class="btn btn-sm btn-warning" ng-click="deleteQueryItem(key,item)">Trash</button>
-            <button type="button" class="btn btn-sm btn-primary" ng-click="collectQueryItem(key,item);">Collect</button>
+            <button type="button" class="btn btn-sm btn-primary" ng-click="collectQueryItem(key,item)">Collect</button>
           </div>
         </div>
       </div>
+
+      <!-- Collected -->
 
       <div role="tabpanel" class="tab-pane collected" id="collected">
 
@@ -133,40 +143,32 @@
             <p>{{item.snippet}}</p>
             <div>{{item.link}}</div>
           </div>
+
           <div class="panel-footer">
-            <button type="button" class="btn btn-sm btn-warning" ng-click="removeCollectedItem(key,item)">Reject</button>
-            <button type="button"
-                    class="btn btn-sm btn-primary"
-                    data-toggle="collapse"
-                    data-target="#tags"
-                    aria-expanded="false"
-                    aria-controls="tags">
-              Tag
-            </button>
-            <div class="tags collapse" id="tags">
-              <form x-form-utils class="form-horizontal">
-
-                <fieldset class="form-group">
-                  <div class="col-sm-12">
-                    <input class="form-control input-lg" placeholder="Add a tag" ng-model="item.tags">
-                  </div>
-                </fieldset>
-
-                <fieldset class="form-group">
-                  <div class="col-sm-12">
-                    <ul class="list-inline">
-                      <li ng-repeat="tag in tags.main">
-                        <button ng-click="" class="btn btn-default btn-sm">{{tag}}</button>
-                      </li>
-                    </ul>
-                  </div>
-                </fieldset>
-
-              </form>
+            <div class="btn-group pull-left" data-toggle="buttons" role="group">
+              <label ng-repeat="tag in tags.main"
+                     ng-click="toggleTag(key, tag)"
+                     class="btn btn-default btn-sm"
+                     x-tags>
+                <input type="checkbox" autocomplete="off"> {{tag}}
+              </label>
             </div>
+            <button type="button"
+                    class="btn btn-sm btn-warning"
+                    ng-click="removeCollectedItem(key,item)">
+              Reject
+            </button>
+            <button type="button"
+                    class="btn btn-sm btn-primary save"
+                    data-loading-text="Saving..."
+                    x-autosave>
+              Save all
+            </button>
           </div>
         </div>
       </div>
+
+      <!-- Trash -->
 
       <div role="tabpanel" class="tab-pane trash" id="trash">
 
