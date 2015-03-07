@@ -117,11 +117,11 @@
         </div>
         <div class="panel panel-default" ng-repeat="(key, item) in results.items">
           <div class="panel-heading">
-            <h3 class="panel-title"><a ng-href="{{item.link}}">{{item.title}}</a></h3>
+            <h3 class="panel-title">{{item.title}}</h3>
           </div>
           <div class="panel-body">
             <p>{{item.snippet}}</p>
-            <div>{{item.link}}</div>
+            <div><a ng-href="{{item.link}}">{{item.link}}</a></div>
           </div>
 
           <div class="panel-footer">
@@ -137,11 +137,11 @@
 
         <div class="panel panel-default" ng-repeat="(key, item) in collected">
           <div class="panel-heading">
-            <h3 class="panel-title"><a ng-href="{{item.link}}">{{item.title}}</a></h3>
+            <h3 class="panel-title">{{item.title}}</h3>
           </div>
           <div class="panel-body">
             <p>{{item.snippet}}</p>
-            <div>{{item.link}}</div>
+            <div><a ng-href="{{item.link}}">{{item.link}}</a></div>
           </div>
 
           <div class="panel-footer">
@@ -174,11 +174,11 @@
 
         <div class="panel panel-default" ng-repeat="(key, item) in trash">
           <div class="panel-heading">
-            <h3 class="panel-title"><a ng-href="{{item.link}}">{{item.title}}</a></h3>
+            <h3 class="panel-title">{{item.title}}</h3>
           </div>
           <div class="panel-body">
             <p>{{item.snippet}}</p>
-            <div>{{item.link}}</div>
+            <div><a ng-href="{{item.link}}">{{item.link}}</a></div>
           </div>
           <div class="panel-footer">
             <button type="button" class="btn btn-sm btn-primary" ng-click="restoreQueryItem(key,item)">Restore</button>

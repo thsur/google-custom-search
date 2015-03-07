@@ -35,6 +35,7 @@ angular.module('app').controller('App', function ($rootScope, $scope, $route, $l
 
           $location.path(paths.login);
         }
+
         return;
       }
 
@@ -53,6 +54,7 @@ angular.module('app').controller('App', function ($rootScope, $scope, $route, $l
 
       if (!current) { internal404(); };
     }),
+
     $rootScope.$on('$locationChangeSuccess', function (event, current, prev) {
 
       if (!Routes.active.route) { internal404(); };

@@ -120,35 +120,21 @@ angular.module('google').directive('autosave', function ($interval) {
     scope: true,
     link: function(scope, element, attrs) {
 
-      var interval = 60 * 5 * 1000; // Autosave every 5 minutes
+      var buttons;
 
-      if (!scope.autosave) {
+      scope.$on('app.pre-save', function () {
 
-        scope.autosave = $interval(function () {
+        buttons = $('button.save').button('loading');
+      });
 
-          var buttons = $('button.save').button('loading');
+      scope.$on('app.post-save', function () {
 
-          scope.save(function () {
-
-            buttons.button('reset');
-          });
-
-        }, interval);
-
-        scope.$on('$destroy', function () {
-
-          $interval.cancel(scope.autosave);
-        });
-      }
+        buttons.button('reset');
+      });
 
       element.on('click', function () {
 
-        var button = $(this).button('loading');
-
-        scope.save(function () {
-
-          button.button('reset');
-        });
+        scope.save();
       });
     }
   };

@@ -6,11 +6,16 @@
 
 ## Requirements
 
-PHP > 5.5 with SQLite3 
+PHP > 5.5 with SQLite3
 
 ## Making it work
 
 In case you want more than just browse the code.
+
+### Extended Requirements
+
+To work with the source code, you may want to have:
+Ruby, Rake, Node, Yeoman, Bower & a Bash (Cygwin should work fine).  
 
 ### Obtain keys
 
@@ -42,6 +47,16 @@ So, the steps are:
 ### When on Windows
 
 On Windows, you may need to activate the SQLite3 dll, see http://php.net/manual/en/sqlite3.installation.php.
+
+### Install the app
+
+...
+
+### Running tests
+
+If you want to run any midway tests, you might want to change the urls for both `base` and `test` in `karma.proxies.conf.js`. 
+
+Unit tests should run without the need for changes.
 
 ## License
 

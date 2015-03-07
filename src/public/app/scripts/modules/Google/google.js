@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('app').controller('Google', function ($scope, Server){
+angular.module('app').controller('Google', function ($scope, $interval, Server){
 
   $scope.query     = {q: ''};
 
@@ -38,7 +38,7 @@ angular.module('app').controller('Google', function ($scope, Server){
    */
   $scope.addSnippet = function (snippet) {
 
-    query.q = query.q + ' ' + snippet;
+    $scope.query.q = $scope.query.q + ' ' + snippet;
   };
 
   /**
@@ -198,6 +198,8 @@ angular.module('app').controller('Google', function ($scope, Server){
 
     log(send);
 
+    $scope.$broadcast('app.pre-save');
+
     Server
     .get('/tags')
     .success(function(data, status) {
@@ -206,6 +208,27 @@ angular.module('app').controller('Google', function ($scope, Server){
 
         callback();
       }
+    })
+    .finally(function () {
+
+      $scope.$broadcast('app.post-save');
     });
-  }
+  };
+
+  /**
+   * Auto-save & on destroy
+   */
+
+  var interval = 60 * 5 * 1000; // Autosave every 5 minutes
+  var autosave = $interval(function () {
+
+    $scope.save();
+
+  }, interval);
+
+  $scope.$on('$destroy', function () {
+
+    $interval.cancel(autosave);
+    $scope.save();
+  });
 });
