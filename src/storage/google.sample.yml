@@ -1,0 +1,56 @@
+[
+  {
+    queries:
+    {
+      nextPage:
+        [
+          {
+            title: 'Google Custom Search - Henry David Thoreau', totalResults: '559000', searchTerms: 'Henry David Thoreau', count: 10, startIndex: 11, inputEncoding: utf8, outputEncoding: utf8, safe: off, cx: '008195166369752172142:3p_pf3yx01e'
+          }
+        ],
+      request:
+        [
+          {
+          title: 'Google Custom Search - Henry David Thoreau', totalResults: '559000', searchTerms: 'Henry David Thoreau', count: 10, startIndex: 1, inputEncoding: utf8, outputEncoding: utf8, safe: off, cx: '008195166369752172142:3p_pf3yx01e'
+          }
+        ]
+    },
+    searchInformation:
+      {
+        searchTime: 0.440905, formattedSearchTime: '0.44', totalResults: '559000', formattedTotalResults: '559,000'
+      },
+    items:
+      [
+        {
+          title: 'Henry David Thoreau - Wikipedia, the free encyclopedia', link: 'http://en.wikipedia.org/wiki/Henry_David_Thoreau', displayLink: en.wikipedia.org, snippet: "Henry David Thoreau (see name pronunciation; July 12, 1817 – May 6, 1862) \nwas an American author, poet, philosopher, abolitionist, naturalist, tax resister,\_...", formattedUrl: en.wikipedia.org/wiki/Henry_David_Thoreau
+        },
+        {
+          title: 'Henry David Thoreau - Biography - Philosopher, Poet, Journalist ...', link: 'http://www.biography.com/people/henry-david-thoreau-9506784', displayLink: www.biography.com, snippet: "Learn more about the life, career, and philosophy of American essayist, poet, and \npractical philosopher Henry David Thoreau on Biography.com.", formattedUrl: www.biography.com/people/henry-david-thoreau-9506784
+        },
+        {
+          title: 'Henry David Thoreau Quotes - BrainyQuote', link: 'http://www.brainyquote.com/quotes/authors/h/henry_david_thoreau.html', displayLink: www.brainyquote.com, snippet: "Enjoy the best Henry David Thoreau Quotes at BrainyQuote. Quotations by Henry \nDavid Thoreau, American Author, Born July 12, 1817. Share with your friends.", formattedUrl: www.brainyquote.com/quotes/authors/h/henry_david_thoreau.html
+        },
+        {
+          title: 'Henry David Thoreau', link: 'http://transcendentalism-legacy.tamu.edu/authors/thoreau/', displayLink: transcendentalism-legacy.tamu.edu, snippet: "Henry David Thoreau was a complex man of many talents who worked hard to \nshape his craft and his life, seeing little difference between them. Born in 1817\_...", formattedUrl: transcendentalism-legacy.tamu.edu/authors/thoreau/
+        },
+        {
+          title: 'The Thoreau Reader', link: 'http://thoreau.eserver.org/', displayLink: thoreau.eserver.org, snippet: "Three complete books and four essays by Henry David Thoreau, annotated \ncopies of Walden and Civil Disobedience, links to other Thoreau sites, and help \nfor\_...", formattedUrl: thoreau.eserver.org/
+        },
+        {
+          title: 'Life and Legacy | The Thoreau Society', link: 'http://www.thoreausociety.org/life-legacy', displayLink: www.thoreausociety.org, snippet: "Thoreau's Life. by Richard J. Schneider. Henry David Thoreau (1817-1862) was \nborn and lived nearly all his life in Concord, Massachusetts, a small town about\_...", formattedUrl: www.thoreausociety.org/life-legacy
+        },
+        {
+          title: 'Henry Thoreau: Who He was & Why He Mattered', link: 'http://thoreau.eserver.org/whowhy.html', displayLink: thoreau.eserver.org, snippet: "Henry David Thoreau (1817-1862) exerted a profound, enduring influence on \nAmerican thought and letters. His famous experiment in living close to nature, \nand\_...", formattedUrl: thoreau.eserver.org/whowhy.html
+        },
+        {
+          title: 'Henry David Thoreau (Author of Walden)', link: 'http://www.goodreads.com/author/show/10264.Henry_David_Thoreau', displayLink: www.goodreads.com, snippet: "Henry David Thoreau (born David Henry Thoreau)was an American author, \nnaturalist, transcendentalist, tax resister, development critic, philosopher, and a...", formattedUrl: www.goodreads.com/author/show/10264.Henry_David_Thoreau
+        },
+        {
+          title: 'Henry David Thoreau (1817-1862): A Guide to Resources on Henry ...', link: 'http://www.transcendentalists.com/1thorea.html', displayLink: www.transcendentalists.com, snippet: "Henry David Thoreau links: a concise, simple directory to resources on Henry \nDavid Thoreau, American author, poet and philosopher. More links to Thoreau's\_...", formattedUrl: www.transcendentalists.com/1thorea.html
+        },
+        {
+          title: 'Life & Times of Henry David Thoreau', link: 'http://thoreau.library.ucsb.edu/thoreau_life.html', displayLink: thoreau.library.ucsb.edu, snippet: "Extensive site devoted to the writings, philosophy, life of Henry David Thoreau; \ncreated by The Writings of Henry D. Thoreau, definitive edition of Thoreau's \nworks\_...", formattedUrl: thoreau.library.ucsb.edu/thoreau_life.html
+        }
+      ]
+  }
+]

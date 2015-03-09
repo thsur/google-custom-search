@@ -29,7 +29,7 @@ angular.module('app').controller('Google', function ($scope, $interval, $modal, 
   // Load saved searches
 
   Server
-    .get('/search/google')
+    .get('/search/all')
     .success(function(data, status) {
 
       $scope.queries = data;
@@ -141,7 +141,7 @@ angular.module('app').controller('Google', function ($scope, $interval, $modal, 
     $scope.query.q = query.query;
 
     Server
-    .get('/search/google/get/' + hash)
+    .get('/search/' + hash)
     .success(function(data, status) {
 
       init(data);
@@ -173,7 +173,7 @@ angular.module('app').controller('Google', function ($scope, $interval, $modal, 
       .then(function () {
 
         Server
-          .get('/search/google/delete/' + hash)
+          .get('/search/delete/' + hash)
           .success(function(data, status) {
 
             if (isCurrent) {

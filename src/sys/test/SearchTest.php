@@ -38,7 +38,7 @@ class SearchTest extends WebTestCase {
         $client->request(
 
             'GET',
-            '/search/google/get/'.$this->hash
+            '/search/'.$this->hash
         );
 
         $response = $client->getResponse();
@@ -68,13 +68,13 @@ class SearchTest extends WebTestCase {
         $this->assertEquals(200, $status);
     }
 
-    public function testGetGoogleSearch() {
+    public function testGetSavedSearch() {
 
         $client  = $this->createClient();
         $client->request(
 
             'GET',
-            '/search/google/get/'.$this->hash
+            '/search/'.$this->hash
         );
 
         $response = $client->getResponse();
@@ -95,15 +95,15 @@ class SearchTest extends WebTestCase {
     }
 
     /**
-     * @depends testGetGoogleSearch
+     * @depends testGetSavedSearch
      */
-    public function testAllGoogleSearches() {
+    public function testGetAllSearches() {
 
         $client  = $this->createClient();
         $client->request(
 
             'GET',
-            '/search/google'
+            '/search/all'
         );
 
         $response = $client->getResponse();
@@ -124,15 +124,15 @@ class SearchTest extends WebTestCase {
     }
 
     /**
-     * @depends testGetGoogleSearch
+     * @depends testGetSavedSearch
      */
-    public function testDeleteGoogleSearch() {
+    public function testDeleteSearch() {
 
         $client  = $this->createClient();
         $client->request(
 
             'GET',
-            '/search/google/delete/'.$this->hash
+            '/search/delete/'.$this->hash
         );
 
         $response = $client->getResponse();
@@ -143,7 +143,7 @@ class SearchTest extends WebTestCase {
         $client->request(
 
             'GET',
-            '/search/google/get/'.$this->hash
+            '/search/'.$this->hash
         );
 
         $response = $client->getResponse();
@@ -153,15 +153,15 @@ class SearchTest extends WebTestCase {
     }
 
     /**
-     * @depends testGetGoogleSearch
+     * @depends testGetSavedSearch
      */
-    public function testRecoverDeletedGoogleSearch() {
+    public function testRecoverDeletedSearch() {
 
         $client  = $this->createClient();
         $client->request(
 
             'GET',
-            '/search/google/recover/'.$this->hash
+            '/search/recover/'.$this->hash
         );
 
         $response = $client->getResponse();
@@ -172,7 +172,7 @@ class SearchTest extends WebTestCase {
         $client->request(
 
             'GET',
-            '/search/google/get/'.$this->hash
+            '/search/'.$this->hash
         );
 
         $response = $client->getResponse();

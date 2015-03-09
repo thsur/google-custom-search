@@ -62,7 +62,7 @@ describe('Controller: Google', function () {
        */
       $httpBackend.whenGET('/tags').respond(200, [{}]);
 
-      $httpBackend.expectGET('/search/google').respond(200, [{}]);
+      $httpBackend.expectGET('/search/all').respond(200, [{}]);
       controllerFactory();
       $httpBackend.flush();
 
@@ -78,7 +78,7 @@ describe('Controller: Google', function () {
        *
        * @see http://stackoverflow.com/a/22405251/3323348
        */
-      $httpBackend.whenGET('/search/google').respond(200, [{}]);
+      $httpBackend.whenGET('/search/all').respond(200, [{}]);
 
       $httpBackend.expectGET('/tags').respond(200, [{}]);
       controllerFactory();
@@ -89,7 +89,7 @@ describe('Controller: Google', function () {
 
     it('sends a changed result set to the server (result, collected items, trash)', function () {
 
-      $httpBackend.whenGET('/search/google').respond(200, [{}]);
+      $httpBackend.whenGET('/search/all').respond(200, [{}]);
       $httpBackend.whenGET('/tags').respond(200, [{}]);
 
       controllerFactory();
@@ -101,7 +101,7 @@ describe('Controller: Google', function () {
 
     it('sends a Google query to the server', function () {
 
-      $httpBackend.whenGET('/search/google').respond(200, [{}]);
+      $httpBackend.whenGET('/search/all').respond(200, [{}]);
       $httpBackend.whenGET('/tags').respond(200, [{}]);
 
       controllerFactory();

@@ -129,10 +129,17 @@ namespace :test do
   end
 
   desc 'Run midway tests & watch for changes.'
-  task :midway do
+  task :midway_autowatch do
     cd('src/public') do
       sh './karma-midway.sh'
     end
+  end
+
+  desc 'Run all PHP & JS tests.'
+  task :all do
+    Rake::Task['test:server'].invoke
+    Rake::Task['test:karma'].invoke
+    Rake::Task['test:midway'].invoke
   end
 end
 

@@ -175,25 +175,13 @@ $app->post('/search/google', function (Application $app, Request $request) {
 
     $db->query($sql, $prepared);
 
-    $forward  = Request::create('/search/google/get/'.$data['hash'], 'GET');
+    $forward  = Request::create('/search/'.$data['hash'], 'GET');
     return $app->handle($forward, HttpKernelInterface::SUB_REQUEST, false);
-});
-
-// Get a saved search
-
-$app->get('/search/google/get/{hash}', function (Application $app, $hash) {
-
-    $db     = $app['dbs']->queries;
-    $sql    = "select * from queries where hash = ? and deleted is null limit 1";
-
-    $result = $db->query($sql, array($hash));
-
-    return $app->json($result);
 });
 
 // Get all saved searches
 
-$app->get('/search/google', function (Application $app) {
+$app->get('/search/all', function (Application $app) {
 
     $db     = $app['dbs']->queries;
     $sql    = "select hash, query from queries where deleted is null group by hash";
@@ -205,7 +193,7 @@ $app->get('/search/google', function (Application $app) {
 
 // Mark a saved search as deleted
 
-$app->get('/search/google/delete/{hash}', function (Application $app, $hash) {
+$app->get('/search/delete/{hash}', function (Application $app, $hash) {
 
     $db     = $app['dbs']->queries;
     $sql    = "update queries set deleted = 1 where hash = ?";
@@ -217,7 +205,7 @@ $app->get('/search/google/delete/{hash}', function (Application $app, $hash) {
 
 // Un-delete a saved search
 
-$app->get('/search/google/recover/{hash}', function (Application $app, $hash) {
+$app->get('/search/recover/{hash}', function (Application $app, $hash) {
 
     $db     = $app['dbs']->queries;
     $sql    = "update queries set deleted = null where hash = ?";
@@ -243,6 +231,18 @@ $app->post('/search/update', function (Application $app, Request $request) {
     $db->query($sql, $prepared);
 
     return $app->json();
+});
+
+// Get a saved search
+
+$app->get('/search/{hash}', function (Application $app, $hash) {
+
+    $db     = $app['dbs']->queries;
+    $sql    = "select * from queries where hash = ? and deleted is null limit 1";
+
+    $result = $db->query($sql, array($hash));
+
+    return $app->json($result);
 });
 
 /**
