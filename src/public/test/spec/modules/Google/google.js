@@ -43,7 +43,7 @@ describe('Controller: Google', function () {
     })
   );
 
-  describe("Requests", function () {
+  describe('Getting and saving data', function () {
 
     afterEach(function() {
 
@@ -87,11 +87,32 @@ describe('Controller: Google', function () {
       expect(scope.tags).toEqual([{}]);
     });
 
-    xit('sends a Google query to the server', function () {});
-    xit('sends a changed result set to the server (result, collected items, trash)', function () {});
+    it('sends a changed result set to the server (result, collected items, trash)', function () {
+
+      $httpBackend.whenGET('/search/google').respond(200, [{}]);
+      $httpBackend.whenGET('/tags').respond(200, [{}]);
+
+      controllerFactory();
+
+      $httpBackend.expectPOST('/search/update').respond(200);
+      scope.save();
+      $httpBackend.flush();
+    });
+
+    it('sends a Google query to the server', function () {
+
+      $httpBackend.whenGET('/search/google').respond(200, [{}]);
+      $httpBackend.whenGET('/tags').respond(200, [{}]);
+
+      controllerFactory();
+
+      $httpBackend.expectPOST('/search/google').respond(200, [{}]);
+      scope.initSearch();
+      $httpBackend.flush();
+    });
   });
 
-  describe("Results", function () {
+  describe("Collecting and tagging", function () {
 
     var Controller;
 

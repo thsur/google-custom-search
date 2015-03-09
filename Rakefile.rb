@@ -13,90 +13,114 @@ end
 
 # Setup
 
-desc 'Setup directory structure.'
-task :init_dirs do
-  sh 'mkdir --parents bin dist src/storage src/sys/test src/public'
-end
+namespace :install do
 
-desc 'Install Composer.'
-task :install_composer do
-  sh 'curl -sS https://getcomposer.org/installer | php'
-end
-
-desc 'Install Silex.'
-task :install_silex do
-
-  # We need Angular's dir structure, so make sure it's created.
-
-  if Dir.exists?('src/public/app')
-    Rake::Task['install_angular'].invoke
+  desc 'Setup directory structure.'
+  task :init_dirs do
+    sh 'mkdir --parents bin dist src/storage src/sys/test src/public'
+    sh 'chmod 775 src/storage'
   end
 
-  Rake::Task['update_composer'].invoke
-
-  # Create an empty Silex bootstrap/app file.
-
-  sh 'touch src/public/app/connect.php';
-  sh 'chmod 744 src/public/app/connect.php';
-end
-
-desc 'Install Angular.'
-task :install_angular do
-  cd('src/public') do
-    sh 'yo angular'
+  desc 'Install Composer.'
+  task :composer do
+    sh 'curl -sS https://getcomposer.org/installer | php'
   end
-end
 
-desc 'Install PHPUnit.'
-task :install_phpunit do
-  sh 'wget https://phar.phpunit.de/phpunit.phar'
-  sh 'chmod +x phpunit.phar'
-end
+  desc 'Install Silex.'
+  task :silex do
 
-# Package managers
+    # We need Angular's dir structure, so make sure it's created.
 
-desc 'Update Composer packages.'
-task :update_composer do
-  sh 'composer.phar update --verbose'
-end
+    if Dir.exists?('src/public/app')
+      Rake::Task['install:angular'].invoke
+    end
 
-desc 'Update Bower packages.'
-task :update_bower do
-  sh 'bower update --verbose'
-end
+    Rake::Task['update:composer'].invoke
 
-desc 'Update Ruby gems.'
-task :update_gems do
-  sh 'bundle update --verbose'
-end
+    # Create an empty Silex bootstrap/app file.
 
-# Testing
+    sh 'touch src/public/app/connect.php';
+    sh 'chmod 744 src/public/app/connect.php';
+  end
 
-desc 'Run Silex tests with PHPUnit.'
-task :test_server do
-  begin
-    sh './phpunit.phar --no-globals-backup src/sys/test/'
-  rescue => e
-    puts 'Task failed.'
+  desc 'Install Angular.'
+  task :angular do
+    cd('src/public') do
+      sh 'yo angular'
+    end
+  end
+
+  desc 'Install PHPUnit.'
+  task :phpunit do
+    sh 'wget https://phar.phpunit.de/phpunit.phar'
+    sh 'chmod +x phpunit.phar'
   end
 end
 
 # Maintenance
 
-desc 'Update PHP autoload.'
-task :update_autoload do
-  sh 'composer.phar dump-autoload'
+namespace :update do
+
+  desc 'Update Composer packages.'
+  task :composer do
+    sh 'composer.phar update --verbose'
+  end
+
+  desc 'Update Bower packages.'
+  task :bower do
+    sh 'bower update --verbose'
+  end
+
+  desc 'Update Ruby gems.'
+  task :gems do
+    sh 'bundle update --verbose'
+  end
+
+
+  desc 'Update PHP autoload.'
+  task :autoload do
+    sh 'composer.phar dump-autoload'
+  end
+
+  desc 'Backup everything inside and below the current folder into backup.tar.gz.'
+  task :backup do
+
+    file = 'backup.tar.gz'
+    excl = '--exclude=src/sys/vendor --exclude=src/public/node_modules --exclude=src/public/app/bower_components'
+    tar  = "tar -caf #{file} #{excl} ./{*,.??*}"
+
+    rm file, { verbose: true } if File.exists? file
+    sh tar
+  end
 end
 
-desc 'Backup everything inside and below the current folder into backup.tar.gz.'
-task :backup do
+# Testing
 
-  file = 'backup.tar.gz'
-  excl = '--exclude=src/sys/vendor --exclude=src/public/node_modules --exclude=src/public/app/bower_components'
-  tar  = "tar -caf #{file} #{excl} ./{*,.??*}"
+namespace :test do
 
-  rm file, { verbose: true } if File.exists? file
-  sh tar
+  desc 'Run Silex tests with PHPUnit.'
+  task :server do
+    begin
+      sh './phpunit.phar --no-globals-backup src/sys/test/'
+    rescue => e
+      puts 'Task failed.'
+    end
+  end
+
+  desc 'Run Jasmine unit tests with Karma.'
+  task :karma do
+    cd('src/public') do
+      sh './karma.sh'
+    end
+  end
+
+  desc 'Run Jasmine tests & watch for changes.'
+  task :karma_autowatch do
+    cd('src/public') do
+      sh './karmawatch.sh'
+    end
+  end
+
 end
 
 # Git
@@ -140,3 +164,4 @@ namespace :git do
     sh "git diff --stat #{sha}"
   end
 end
+

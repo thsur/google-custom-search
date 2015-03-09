@@ -15,9 +15,9 @@ $create = array();
  * @todo  Create table 'collected' (hash, items)
  * @todo  Create table 'trash' (hash, items)
  */
-$create['queries.db']['raw'] = <<<EOT
+$create['queries.db']['queries'] = <<<EOT
 
-CREATE TABLE raw(
+CREATE TABLE queries(
 
     id INTEGER,
     query TEXT,
@@ -25,6 +25,8 @@ CREATE TABLE raw(
     queries TEXT,
     info TEXT,
     items TEXT,
+    collected TEXT,
+    trash TEXT,
     deleted INTEGER,
     PRIMARY KEY(id)
 );

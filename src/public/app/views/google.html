@@ -56,7 +56,7 @@
                   <input id="search" class="form-control input-lg" placeholder="Google search" autofocus ng-model="query.q">
                 </div>
                 <div class="col-sm-2">
-                  <input type="submit" class="btn btn-lg btn-primary" value="Okay">
+                  <input type="submit" class="btn btn-lg btn-primary" value="Okay" ng-click="initSearch(switchTab, [1])">
                 </div>
               </div>
 
@@ -97,11 +97,14 @@
 
             <fieldset class="collapse form-group" id="saved_searches">
               <div class="col-sm-12">
-                <ul class="list-inline">
-                  <li ng-repeat="query in queries">
-                    <button ng-click="loadQuery(query.hash, switchTab, [1])" class="btn btn-default btn-sm">{{query.query}}</button>
-                  </li>
-                </ul>
+                <div class="list-group">
+                  <span ng-repeat="query in queries" class="list-group-item">
+                    <a href="javascript:void(0)" ng-click="loadQuery(query, switchTab, [1])">{{query.query}}</a>
+                    <button type="button" class="close" aria-label="Close" ng-click="deleteQuery(query)">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </span>
+                </div>
               </div>
             </fieldset>
 
@@ -189,3 +192,16 @@
 
   </div>
 </div>
+
+<script type="text/ng-template" id="confirm-delete.html">
+  <div class="modal-header">
+      <h3 class="modal-title">Remove a saved query</h3>
+  </div>
+  <div class="modal-body">
+      You are about to remove a saved query. This includes its results, all collected items and its trash. Do you really want to proceed?
+  </div>
+  <div class="modal-footer">
+      <button class="btn btn-danger" ng-click="$close()">OK</button>
+      <button class="btn btn-success" ng-click="$dismiss()">Cancel</button>
+  </div>
+</script>

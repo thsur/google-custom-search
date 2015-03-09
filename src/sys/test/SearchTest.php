@@ -27,7 +27,7 @@ class SearchTest extends WebTestCase {
     public function setUp() {
 
         $this->query = 'Henry David Thoreau';
-        $this->hash  = md5($this->query);
+        $this->hash  = sha1($this->query);
 
         parent::setUp();
     }
@@ -46,7 +46,7 @@ class SearchTest extends WebTestCase {
 
         if (!empty($result)) {
 
-            // Rather costly test, so better skip if we have already data
+            // Rather costly test, so better skip if we already have data
             $this->markTestSkipped();
         }
 
@@ -65,7 +65,7 @@ class SearchTest extends WebTestCase {
         $status   = $response->getStatusCode();
         $content  = json_decode($response->getContent(), true);
 
-        $this->assertEquals(201, $status);
+        $this->assertEquals(200, $status);
     }
 
     public function testGetGoogleSearch() {

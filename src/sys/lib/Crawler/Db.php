@@ -44,7 +44,7 @@ class Db {
      */
     protected function bind(\SQLite3Stmt $statement, Array $bind) {
 
-        // Sniff type of bind (positional, non-positional) by first key
+        // Sniff type of bind (positional, named) by first key
 
         reset($bind);
 
@@ -90,8 +90,69 @@ class Db {
      */
     public function getInfo($table) {
 
-        $sql    = "PRAGMA table_info({$table});";
+        $sql = "PRAGMA table_info({$table});";
         return $this->query($sql);
+    }
+
+    /**
+     * Turns an associative array into an array that can be used
+     * with prepared statements.
+     *
+     * Returns the transformed array plus a column and a value
+     * string to use with SQL insert & update queries, depending
+     * on the query type given.
+     *
+     * @param  Array  - data to transform
+     * @param  String - query type (update|insert|none)
+     * @return Array  - transformed data[, cols[, vals]]
+     */
+    public function getPrepared(Array $data, $type = null) {
+
+        $bind = array();
+
+        foreach ($data as $key => $value) {
+
+            $bind[':'.$key] = $value;
+        }
+
+        if (!$type) {
+
+            return $bind;
+        }
+
+        $type = strtolower($type);
+
+        if ($type == 'insert') {
+
+            $vals = implode(',', array_keys($bind));
+            $cols = str_replace(':', '', $vals);
+
+            return array($bind, $cols, $vals);
+        }
+
+        if ($type == 'update') {
+
+            $cols = array();
+
+            foreach (array_keys($bind) as $key) {
+
+                $cols[] = substr($key, 1).'='.$key;
+            }
+
+            $cols = implode(',', $cols);
+
+            return array($bind, $cols);
+        }
+    }
+
+    /**
+     * Returns the id of the last inserted row.
+     *
+     * @return Int
+     */
+    public function getLastRowId () {
+
+        return $this->db->lastInsertRowid();
     }
 
     /**

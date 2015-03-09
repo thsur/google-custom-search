@@ -35,7 +35,7 @@ $app = new Application();
 
 // Config
 
-$config = Yaml::parse(file_get_contents(__STORAGE__.'/config.sample.yml'));
+$config = Yaml::parse(file_get_contents(__STORAGE__.'/config.yml'));
 
 foreach ($config as $key => $value) {
 
@@ -150,7 +150,7 @@ $app->get('/tags/remove/{key}', function (Application $app, $key) {
  * Google routes
  */
 
-// Google Search
+// Do a Google search and store the results
 
 $app->post('/search/google', function (Application $app, Request $request) {
 
@@ -159,24 +159,24 @@ $app->post('/search/google', function (Application $app, Request $request) {
 
     // Insert into db
 
-    $bind = array(
+    $db   = $app['dbs']->queries;
+    $data = array(
 
-        ':query'    => $app->escape($query),
-        ':hash'     => md5($query),
-        ':queries'  => json_encode($results['queries']), // 'nextPage','previousPage,'request'
-        ':info'     => json_encode($results['searchInformation']), // 'totalResults','formattedTotalResults'
-        ':items'    => json_encode($results['items'])
+        'query'    => $app->escape($query),
+        'hash'     => sha1($query),
+        'queries'  => json_encode($results['queries']), // 'nextPage','previousPage,'request'
+        'info'     => json_encode($results['searchInformation']), // 'totalResults','formattedTotalResults'
+        'items'    => json_encode($results['items'])
     );
 
-    $vals = implode(',', array_keys($bind));
-    $cols = str_replace(':', '', $vals);
+    list($prepared, $cols, $vals) = $db->getPrepared($data, 'insert');
 
-    $db   = $app['dbs']->queries;
-    $sql  = "insert into raw({$cols}) values({$vals})";
+    $sql  = "insert into queries({$cols}) values({$vals})";
 
-    $db->query($sql, $bind);
+    $db->query($sql, $prepared);
 
-    return $app->json(null, 201); // 201 created
+    $forward  = Request::create('/search/google/get/'.$data['hash'], 'GET');
+    return $app->handle($forward, HttpKernelInterface::SUB_REQUEST, false);
 });
 
 // Get a saved search
@@ -184,7 +184,7 @@ $app->post('/search/google', function (Application $app, Request $request) {
 $app->get('/search/google/get/{hash}', function (Application $app, $hash) {
 
     $db     = $app['dbs']->queries;
-    $sql    = "select * from raw where hash = ? and deleted is null limit 1";
+    $sql    = "select * from queries where hash = ? and deleted is null limit 1";
 
     $result = $db->query($sql, array($hash));
 
@@ -196,19 +196,19 @@ $app->get('/search/google/get/{hash}', function (Application $app, $hash) {
 $app->get('/search/google', function (Application $app) {
 
     $db     = $app['dbs']->queries;
-    $sql    = "select hash, query from raw where deleted is null group by hash";
+    $sql    = "select hash, query from queries where deleted is null group by hash";
 
     $result = $db->query($sql);
 
     return $app->json($result);
 });
 
-// Delete a saved search
+// Mark a saved search as deleted
 
 $app->get('/search/google/delete/{hash}', function (Application $app, $hash) {
 
     $db     = $app['dbs']->queries;
-    $sql    = "update raw set deleted = 1 where hash = ?";
+    $sql    = "update queries set deleted = 1 where hash = ?";
 
     $result = $db->query($sql, array($hash));
 
@@ -220,41 +220,31 @@ $app->get('/search/google/delete/{hash}', function (Application $app, $hash) {
 $app->get('/search/google/recover/{hash}', function (Application $app, $hash) {
 
     $db     = $app['dbs']->queries;
-    $sql    = "update raw set deleted = null where hash = ?";
+    $sql    = "update queries set deleted = null where hash = ?";
 
     $result = $db->query($sql, array($hash));
 
     return $app->json();
 });
 
-// Store a search
+// Update a search
 
-$app->post('/search/store', function (Application $app, Request $request) {
+$app->post('/search/update', function (Application $app, Request $request) {
 
-    $query   = $request->get('query');
-    $results = $app['search']->query($query);
-
-    // Insert into db
-
-    $bind = array(
-
-        ':query'    => $app->escape($query),
-        ':hash'     => md5($query),
-        ':queries'  => json_encode($results['queries']), // 'nextPage','previousPage,'request'
-        ':info'     => json_encode($results['searchInformation']), // 'totalResults','formattedTotalResults'
-        ':items'    => json_encode($results['items'])
-    );
-
-    $vals = implode(',', array_keys($bind));
-    $cols = str_replace(':', '', $vals);
-
+    $data = $request->request->all();
     $db   = $app['dbs']->queries;
-    $sql  = "insert into raw({$cols}) values({$vals})";
 
-    $db->query($sql, $bind);
+    $id   = $data['id'];
+    unset($data['id']);
 
-    return $app->json(null, 201); // 201 created
+    list($prepared, $cols) = $db->getPrepared($data, 'update');
+
+    $sql  = "update queries set {$cols} where id = {$id}";
+    $db->query($sql, $prepared);
+
+    return $app->json();
 });
+
 /**
  * Core routes
  */

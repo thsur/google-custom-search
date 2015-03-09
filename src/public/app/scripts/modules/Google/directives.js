@@ -19,7 +19,7 @@ angular.module('google').directive('googleTabs', function () {
 
         if (scope.queries[0]) {
 
-          scope.loadQuery(scope.queries[0].hash, scope.switchTab, [1]);
+          // scope.loadQuery(scope.queries[0], scope.switchTab, [1]);
         }
       });
 
@@ -56,15 +56,20 @@ angular.module('google').directive('googleTabs', function () {
         scope.switchTab(switch_to); // Call x-ui-util's switchTab()
       };
 
+      var isEmpty = function (collection) {
+
+        return _.size(collection) == 0;
+      };
+
       var changedToEmpty = function (collection, new_val, old_val) {
 
-          var empty       = _.size(collection) == 0;
-          var changed     = (new_val !== old_val);
+          var empty   = isEmpty(collection);
+          var changed = (new_val !== old_val);
 
           return (empty && changed);
       };
 
-      scope.$watchCollection('results.items', function (new_val, old_val) {
+      scope.$watchCollection('results', function (new_val, old_val) {
 
         if (changedToEmpty(scope.results.items, new_val, old_val)) {
 

@@ -4,6 +4,10 @@
 
 ...
 
+## What it is
+
+It's _proof of concept_-code. Expect it to be un-DRY at times, and to miss some checks and balances. 
+
 ## Requirements
 
 PHP > 5.5 with SQLite3

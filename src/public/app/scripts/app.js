@@ -28,7 +28,9 @@ var log = (function (console) {
       'ngCookies',
       'ngResource',
       'ngSanitize',
-      'ngRoute'
+      'ngRoute',
+      'ui.bootstrap',
+      'ui.bootstrap.tpls'
     ],
 
     core: [
