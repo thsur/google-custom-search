@@ -107,20 +107,33 @@ namespace :test do
     end
   end
 
-  desc 'Run Jasmine unit tests with Karma.'
+  desc 'Run Jasmine unit tests.'
   task :karma do
     cd('src/public') do
       sh './karma.sh'
     end
   end
 
-  desc 'Run Jasmine tests & watch for changes.'
+  desc 'Run unit tests & watch for changes.'
   task :karma_autowatch do
     cd('src/public') do
       sh './karmawatch.sh'
     end
   end
 
+  desc 'Run Mocha midway tests.'
+  task :midway do
+    cd('src/public') do
+      sh './karma-midway.sh --single-run'
+    end
+  end
+
+  desc 'Run midway tests & watch for changes.'
+  task :midway do
+    cd('src/public') do
+      sh './karma-midway.sh'
+    end
+  end
 end
 
 # Git
@@ -157,11 +170,21 @@ namespace :git do
     sh "git show --pretty='format:' --name-status #{sha}"
   end
 
-  desc 'List current or stats for a commit given as "rake git:stats sha=[...]".'
-  task :stats do
+  desc 'Diff working tree against the current head or a commit given as "rake git:diff sha=[...]".'
+  task :diff do
 
     sha = ENV['sha']
     sh "git diff --stat #{sha}"
+  end
+
+  desc 'List untracked files.'
+  task :untracked do
+    sh "git ls-files --others --exclude-standard"
+  end
+
+  desc 'List ignored files.'
+  task :ignored do
+    sh "git ls-files --others --ignored --exclude-standard"
   end
 end
 
