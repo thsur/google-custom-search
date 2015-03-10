@@ -56,7 +56,12 @@
                   <input id="search" class="form-control input-lg" placeholder="Google search" autofocus ng-model="query.q">
                 </div>
                 <div class="col-sm-2">
-                  <input type="submit" class="btn btn-lg btn-primary" value="Okay" ng-click="initSearch(switchTab, [1])">
+                  <input type="submit"
+                         class="btn btn-lg btn-primary search"
+                         value="Okay"
+                         x-search
+                         data-loading-text="..."
+                         ng-click="initSearch(switchTab, ['#items'])">
                 </div>
               </div>
 
@@ -99,7 +104,7 @@
               <div class="col-sm-12">
                 <div class="list-group">
                   <span ng-repeat="query in queries" class="list-group-item">
-                    <a href="javascript:void(0)" ng-click="loadQuery(query, switchTab, [1])">{{query.query}}</a>
+                    <a href="javascript:void(0)" ng-click="loadQuery(query, switchTab, ['#items'])">{{query.query}}</a>
                     <button type="button" class="close" aria-label="Close" ng-click="deleteQuery(query)">
                       <span aria-hidden="true">&times;</span>
                     </button>
@@ -118,6 +123,7 @@
         <div class="page-header">
           <h1><small>{{results.query}}</small></h1>
         </div>
+
         <div class="panel panel-default" ng-repeat="(key, item) in results.items">
           <div class="panel-heading">
             <h3 class="panel-title">{{item.title}}</h3>
@@ -198,7 +204,7 @@
       <h3 class="modal-title">Remove a saved query</h3>
   </div>
   <div class="modal-body">
-      You are about to remove a saved query. This includes its results, all collected items and its trash. Do you really want to proceed?
+      You are about to remove a saved query. This includes its results, all collected items and its trash. Proceed?
   </div>
   <div class="modal-footer">
       <button class="btn btn-danger" ng-click="$close()">OK</button>

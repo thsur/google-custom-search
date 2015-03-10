@@ -154,7 +154,29 @@ $app->get('/tags/remove/{key}', function (Application $app, $key) {
 
 $app->post('/search/google', function (Application $app, Request $request) {
 
-    $query   = $request->get('query');
+    $query = trim($request->get('query'));
+    $hash  = sha1($query);
+
+    // If we already have a query, return its results
+
+    $get = function ($hash) use ($app) {
+
+        $request  = Request::create('/search/'.$hash, 'GET');
+        $response = $app->handle($request, HttpKernelInterface::SUB_REQUEST, false);
+        $data     = json_decode($response->getContent());
+
+        return array($response, $data);
+    };
+
+    list($response, $data) = $get($hash);
+
+    if (count($data)) {
+
+        return $response;
+    }
+
+    // Otherwise, start a new search
+
     $results = $app['search']->query($query);
 
     // Insert into db
@@ -163,7 +185,7 @@ $app->post('/search/google', function (Application $app, Request $request) {
     $data = array(
 
         'query'    => $app->escape($query),
-        'hash'     => sha1($query),
+        'hash'     => $hash,
         'queries'  => json_encode($results['queries']), // 'nextPage','previousPage,'request'
         'info'     => json_encode($results['searchInformation']), // 'totalResults','formattedTotalResults'
         'items'    => json_encode($results['items'])
@@ -172,11 +194,10 @@ $app->post('/search/google', function (Application $app, Request $request) {
     list($prepared, $cols, $vals) = $db->getPrepared($data, 'insert');
 
     $sql  = "insert into queries({$cols}) values({$vals})";
-
     $db->query($sql, $prepared);
 
-    $forward  = Request::create('/search/'.$data['hash'], 'GET');
-    return $app->handle($forward, HttpKernelInterface::SUB_REQUEST, false);
+    list($response, $data) = $get($hash);
+    return $response;
 });
 
 // Get all saved searches

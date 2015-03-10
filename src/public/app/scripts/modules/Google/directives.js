@@ -19,19 +19,22 @@ angular.module('google').directive('googleTabs', function () {
 
         if (scope.queries[0]) {
 
-          // scope.loadQuery(scope.queries[0], scope.switchTab, [1]);
+          // scope.loadQuery(scope.queries[0], scope.switchTab, ['#items']);
         }
       });
 
       // Watch tabs. If a tab's data sets shrinks to zero,
       // switch to an appropriate alternative tab.
+      //
+      // @todo Fix conflict between switch_tabs & switchTabs() when
+      //       loading a saved search.
 
       var switch_tabs = function (from) {
 
-        var switch_to = 0,
+        var switch_to = '#search',
             name;
 
-        var tabs = {results: 1, collected: 2, trash: 3};
+        var tabs = {results: '#items', collected: '#collected', trash: '#trash'};
 
         switch (from) {
 
@@ -69,28 +72,54 @@ angular.module('google').directive('googleTabs', function () {
           return (empty && changed);
       };
 
-      scope.$watchCollection('results', function (new_val, old_val) {
+      var watch = function () {
 
-        if (changedToEmpty(scope.results.items, new_val, old_val)) {
+        var watchers = [];
 
-          switch_tabs('results');
-        }
+        watchers.push(scope.$watchCollection('results', function (new_val, old_val) {
+
+          if (changedToEmpty(scope.results.items, new_val, old_val)) {
+
+            switch_tabs('results');
+          }
+        }));
+
+        watchers.push(scope.$watchCollection('collected', function (new_val, old_val) {
+
+          if (changedToEmpty(scope.collected, new_val, old_val)) {
+
+            switch_tabs('collected');
+          }
+        }));
+
+        watchers.push(scope.$watchCollection('trash', function (new_val, old_val) {
+
+          if (changedToEmpty(scope.trash, new_val, old_val)) {
+
+            switch_tabs('trash');
+          }
+        }));
+
+        return watchers;
+      };
+
+      var watchers;
+
+      scope.$on('app.start.watchSets', function () {
+
+        watchers = watch(); // Start watchers
       });
 
-      scope.$watchCollection('collected', function (new_val, old_val) {
+      scope.$on('app.stop.watchSets', function () {
 
-        if (changedToEmpty(scope.collected, new_val, old_val)) {
+        if (watchers) {
 
-          switch_tabs('collected');
+          for (var i = 0; i < watchers.length; i++) { // Stop watchers
+
+            watchers[i]();
+          }
         }
-      });
 
-      scope.$watchCollection('trash', function (new_val, old_val) {
-
-        if (changedToEmpty(scope.trash, new_val, old_val)) {
-
-          switch_tabs('trash');
-        }
       });
     }
   };
@@ -127,19 +156,42 @@ angular.module('google').directive('autosave', function ($interval) {
 
       var buttons;
 
-      scope.$on('app.pre-save', function () {
+      scope.$on('app.pre.save', function () {
 
         buttons = $('button.save').button('loading');
       });
 
-      scope.$on('app.post-save', function () {
+      scope.$on('app.post.save', function () {
 
-        buttons.button('reset');
+        if (buttons) buttons.button('reset');
       });
 
       element.on('click', function () {
 
         scope.save();
+      });
+    }
+  };
+});
+
+angular.module('google').directive('search', function ($interval) {
+
+  return {
+
+    restrict: 'A',
+    scope: true,
+    link: function(scope, element, attrs) {
+
+      var button;
+
+      scope.$on('app.pre.search', function () {
+
+        button = $('input.btn.search').button('loading');
+      });
+
+      scope.$on('app.post.search', function () {
+
+        if (button) button.button('reset');
       });
     }
   };

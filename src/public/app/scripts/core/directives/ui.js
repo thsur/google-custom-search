@@ -14,11 +14,12 @@ angular.module('ui').directive('uiUtils', function () {
 
       scope.$root.$on('$viewContentLoaded', function () {});
 
-      scope.switchTab = function (num) {
+      scope.switchTab = function (target) {
 
         if (jQuery().tab) { // Bootstrap tabs
 
-          element.find('.tabpanel').find('a[role="tab"]').eq(num).tab('show');
+          var tab = element.find('.tabpanel').find('a[role="tab"][data-target="' + target + '"]');
+          tab.tab('show');
         }
       };
     }

@@ -48,8 +48,22 @@ angular.module('app').controller('Google', function ($scope, $interval, $modal, 
    * Init scope variables with remote data.
    *
    * @param  Array
+   * @param  Function - callback
+   * @param  Array    - arguments to pass into the callback
    */
-  var init = function (data) {
+  var init = function (data, callback, args) {
+
+    $scope.$broadcast('app.stop.watchSets');
+
+    if (autosave) {
+
+      $interval.cancel(autosave);
+    }
+
+    if ($scope.hasSets()) {
+
+      $scope.save();
+    }
 
     $scope.results       = angular.fromJson(data[0]);
     $scope.results.info  = angular.fromJson($scope.results.info);
@@ -65,18 +79,30 @@ angular.module('app').controller('Google', function ($scope, $interval, $modal, 
       elem.tags = elem.tags || {};
     });
 
-    // Init autosave & on destroy
-
-    if (autosave) {
-
-      $interval.cancel(autosave);
-    }
+    // Init autosave
 
     autosave = $interval(function () {
 
       $scope.save();
 
     }, interval);
+
+    // Notify listeners
+
+    if (angular.isFunction(callback)) {
+
+      callback.apply(null, args)
+    }
+
+    $scope.$broadcast('app.start.watchSets');
+  };
+
+  var clear = function () {
+
+    $scope.results   = {};
+    $scope.collected = [];
+    $scope.trash     = [];
+    $scope.query     = {q: ''};
   };
 
   // API
@@ -103,28 +129,28 @@ angular.module('app').controller('Google', function ($scope, $interval, $modal, 
 
     // Check if query already exists
 
-    angular.forEach($scope.queries, function (elem) {
+    for (var i = 0; i < $scope.queries.length; i++) {
 
-      if (elem.query === query) {
+      if ($scope.queries[i].query === query) {
 
-        return $scope.loadQuery(elem, callback, args);
-      };
-    });
+        return $scope.loadQuery($scope.queries[i], callback, args);
+      }
+    }
+
+    // Otherwise init a new search
+
+    $scope.$broadcast('app.pre.search');
 
     Server
     .post('/search/google', {query: query})
     .success(function(data, status) {
 
-      init(data);
+      init(data, callback, args);
 
       // Add query to list of saved queries
-
       $scope.queries.push({query: $scope.results.query, hash: $scope.results.hash});
 
-      if (angular.isFunction(callback)) {
-
-        callback.call(null, args)
-      }
+      $scope.$broadcast('app.post.search');
     });
   };
 
@@ -140,16 +166,15 @@ angular.module('app').controller('Google', function ($scope, $interval, $modal, 
     var hash       = query.hash;
     $scope.query.q = query.query;
 
+    $scope.$broadcast('app.pre.search');
+
     Server
     .get('/search/' + hash)
     .success(function(data, status) {
 
-      init(data);
+      init(data, callback, args);
+      $scope.$broadcast('app.post.search');
 
-      if (angular.isFunction(callback)) {
-
-        callback.call(null, args)
-      }
     });
   };
 
@@ -163,7 +188,7 @@ angular.module('app').controller('Google', function ($scope, $interval, $modal, 
   $scope.deleteQuery = function (query, callback, args) {
 
     var hash      = query.hash;
-    var isCurrent = $scope.results.length && $scope.results.hash == hash;
+    var isCurrent = $scope.results.hash && $scope.results.hash == hash;
 
     // Confirm delete
 
@@ -178,9 +203,7 @@ angular.module('app').controller('Google', function ($scope, $interval, $modal, 
 
             if (isCurrent) {
 
-              $scope.results   = {};
-              $scope.collected = [];
-              $scope.trash     = [];
+              clear();
             }
 
             // Remove query from list of saved queries
@@ -188,11 +211,12 @@ angular.module('app').controller('Google', function ($scope, $interval, $modal, 
 
             if (angular.isFunction(callback)) {
 
-              callback.call(null, args)
+              callback.apply(null, args)
             }
           });
         },
-        function () { return; }
+        function () { return; },
+        this
       );
   };
 
@@ -216,7 +240,7 @@ angular.module('app').controller('Google', function ($scope, $interval, $modal, 
       }
     });
 
-    $scope.$broadcast('app.pre-save');
+    $scope.$broadcast('app.pre.save');
 
     Server
     .post('/search/update', send)
@@ -229,7 +253,7 @@ angular.module('app').controller('Google', function ($scope, $interval, $modal, 
     })
     .finally(function () {
 
-      $scope.$broadcast('app.post-save');
+      $scope.$broadcast('app.post.save');
     });
   };
 
@@ -323,10 +347,14 @@ angular.module('app').controller('Google', function ($scope, $interval, $modal, 
     return !!$scope.trash.length;
   };
 
+  $scope.hasSets = function () {
+
+    return !!$scope.results.hash; // If it has a hash, it also has one of the above sets.
+  };
+
   /**
    * Add or remove a tag to or from a collected item
    */
-
   $scope.toggleTag = function (key, tag) {
 
     var item = $scope.collected[key];
