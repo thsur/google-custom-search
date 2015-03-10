@@ -76,7 +76,6 @@ namespace :update do
     sh 'bundle update --verbose'
   end
 
-
   desc 'Update PHP autoload.'
   task :autoload do
     sh 'composer.phar dump-autoload'
@@ -91,6 +90,16 @@ namespace :update do
 
     rm file, { verbose: true } if File.exists? file
     sh tar
+  end
+end
+
+namespace :db do
+
+  desc 'Dump db data (saved queries only).'
+  task :dump do
+    cd('src/storage') do
+      sh 'sqlite3 queries.db ".dump queries" | grep -v "^CREATE" > db.dump.sql'
+    end
   end
 end
 

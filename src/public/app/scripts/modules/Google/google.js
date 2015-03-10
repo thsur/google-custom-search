@@ -68,7 +68,7 @@ angular.module('app').controller('Google', function ($scope, $interval, $modal, 
     $scope.results       = angular.fromJson(data[0]);
     $scope.results.info  = angular.fromJson($scope.results.info);
 
-    $scope.results.items = angular.fromJson($scope.results.items);
+    $scope.results.items = angular.fromJson($scope.results.items)     || [];
     $scope.collected     = angular.fromJson($scope.results.collected) || [];
     $scope.trash         = angular.fromJson($scope.results.trash)     || [];
 
@@ -91,7 +91,7 @@ angular.module('app').controller('Google', function ($scope, $interval, $modal, 
 
     if (angular.isFunction(callback)) {
 
-      callback.apply(null, args)
+      // callback.apply(null, args)
     }
 
     $scope.$broadcast('app.start.watchSets');

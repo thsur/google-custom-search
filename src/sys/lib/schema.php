@@ -1,8 +1,8 @@
 <?php
 
-namespace Crawler\Schema;
+namespace App\Schema;
 
-use Crawler\Db;
+use App\Db;
 
 global $create; // Required for phpunit, see http://stackoverflow.com/a/9675013
                 // See also @backupGlobals in https://phpunit.de/manual/current/en/appendixes.annotations.html
@@ -47,7 +47,7 @@ EOT;
  *
  * @param  String - file system path to the database(s)
  * @return Array  - handles to opened/created databases,
- *                  each entry of type Crawler\Db
+ *                  each entry of type App\Db
  */
 function setup($path) {
 

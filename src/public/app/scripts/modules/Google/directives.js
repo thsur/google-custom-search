@@ -12,49 +12,51 @@ angular.module('google').directive('googleTabs', function () {
     scope: true,
     link: function(scope, element, attrs) {
 
-      // Auto-load a saved query and switch to results tab.
-      // For testing purposes only.
-
-      scope.$watch('queries', function (new_val, old_val) {
-
-        if (scope.queries[0]) {
-
-          // scope.loadQuery(scope.queries[0], scope.switchTab, ['#items']);
-        }
-      });
-
-      // Watch tabs. If a tab's data sets shrinks to zero,
-      // switch to an appropriate alternative tab.
+      // Switch to a tab
       //
-      // @todo Fix conflict between switch_tabs & switchTabs() when
-      //       loading a saved search.
+      // Figures out what tab to switch to by looking at the given tab.
 
-      var switch_tabs = function (from) {
+      var switch_tabs_from = function (tab) {
 
-        var switch_to = '#search',
-            name;
+        var tabs = {
 
-        var tabs = {results: '#items', collected: '#collected', trash: '#trash'};
+          search: '#search', results: '#items', collected: '#collected', trash: '#trash'
+        };
 
-        switch (from) {
+        var initial = tabs.search;
+        var switch_to;
+
+        switch (tab) {
+
+          case 'search':
+            if (scope.hasResults()) {
+
+              switch_to = 'results';
+
+            } else if (scope.hasCollected()) {
+
+              switch_to = 'collected';
+
+            } else if (scope.hasTrash()) {
+
+              switch_to = 'trash';
+            }
+            break;
 
           case 'results':
-            name = scope.hasCollected() ? 'collected' : 'trash';
+            switch_to = scope.hasCollected() ? 'collected' : (scope.hasTrash() ? 'trash' : null);
             break;
 
           case 'collected':
-            name = scope.hasResults() ? 'results' : 'trash';
+            switch_to = scope.hasResults() ? 'results' : (scope.hasTrash() ? 'trash' : null);
             break;
 
           case 'trash':
-            name = scope.hasCollected() ? 'results' : 'collected';
+            switch_to = scope.hasResults() ? 'results' : (scope.hasCollected() ? 'collected' : null);
             break;
         }
 
-        if (name && _.size(scope[name])) {
-
-          switch_to = tabs[name];
-        }
+        switch_to = switch_to ? tabs[switch_to] : initial;
 
         scope.switchTab(switch_to); // Call x-ui-util's switchTab()
       };
@@ -72,15 +74,18 @@ angular.module('google').directive('googleTabs', function () {
           return (empty && changed);
       };
 
+      // Watch tabs. If a tab's data set shrinks to zero,
+      // switch to an appropriate alternative tab.
+
       var watch = function () {
 
         var watchers = [];
 
-        watchers.push(scope.$watchCollection('results', function (new_val, old_val) {
+        watchers.push(scope.$watchCollection('results.items', function (new_val, old_val) {
 
           if (changedToEmpty(scope.results.items, new_val, old_val)) {
 
-            switch_tabs('results');
+            switch_tabs_from('results');
           }
         }));
 
@@ -88,7 +93,7 @@ angular.module('google').directive('googleTabs', function () {
 
           if (changedToEmpty(scope.collected, new_val, old_val)) {
 
-            switch_tabs('collected');
+            switch_tabs_from('collected');
           }
         }));
 
@@ -96,7 +101,7 @@ angular.module('google').directive('googleTabs', function () {
 
           if (changedToEmpty(scope.trash, new_val, old_val)) {
 
-            switch_tabs('trash');
+            switch_tabs_from('trash');
           }
         }));
 
@@ -107,7 +112,9 @@ angular.module('google').directive('googleTabs', function () {
 
       scope.$on('app.start.watchSets', function () {
 
-        watchers = watch(); // Start watchers
+        if (!watchers) watchers = watch(); // Start watchers
+
+        switch_tabs_from('search');
       });
 
       scope.$on('app.stop.watchSets', function () {
@@ -118,8 +125,9 @@ angular.module('google').directive('googleTabs', function () {
 
             watchers[i]();
           }
-        }
 
+          watchers = null;
+        }
       });
     }
   };

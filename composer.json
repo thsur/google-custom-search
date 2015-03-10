@@ -6,7 +6,7 @@
     },
     "autoload": {
 
-        "classmap": ["src/sys/lib/Crawler"]
+        "classmap": ["src/sys/lib/App"]
     },
     "require": {
 

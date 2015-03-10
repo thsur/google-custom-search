@@ -1,6 +1,6 @@
 <?php
 
-namespace Crawler\Service;
+namespace App\Service;
 
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Yaml\Dumper;

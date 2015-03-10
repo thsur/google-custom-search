@@ -1,6 +1,6 @@
 <?php
 
-namespace Crawler\Service;
+namespace App\Service;
 
 /**
  * Handle tags.

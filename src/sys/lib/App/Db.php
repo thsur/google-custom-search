@@ -1,6 +1,6 @@
 <?php
 
-namespace Crawler;
+namespace App;
 
 use \SQLite3;
 use \InvalidArgumentException;

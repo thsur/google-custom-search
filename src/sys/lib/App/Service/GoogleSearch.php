@@ -1,6 +1,6 @@
 <?php
 
-namespace Crawler\Service;
+namespace App\Service;
 
 use \Google_Client;
 use \Google_Service_Customsearch;

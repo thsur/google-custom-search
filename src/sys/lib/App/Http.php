@@ -4,7 +4,7 @@
  * @usage Http\Get::url("http://example.com/");
  */
 
-namespace Crawler\Http;
+namespace App\Http;
 
 use \Requests;
 use \Exception;

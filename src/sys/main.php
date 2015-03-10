@@ -4,7 +4,7 @@
  * @todo Tag-System
  */
 
-namespace Crawler;
+namespace App;
 
 /**
  * Bootstrap

@@ -14,6 +14,9 @@ class SearchTest extends WebTestCase {
     protected $query;
     protected $hash;
 
+    protected static $_this_;
+    protected static $skipTeardownAfter;
+
     public function createApplication() {
 
         require __APP__.'/main.php';
@@ -26,29 +29,15 @@ class SearchTest extends WebTestCase {
 
     public function setUp() {
 
-        $this->query = 'Henry David Thoreau';
+        $this->query = 'Henry David Thoreau Test';
         $this->hash  = sha1($this->query);
+
+        self::$_this_ = $this;
 
         parent::setUp();
     }
 
     public function testDoGoogleSearch() {
-
-        $client  = $this->createClient();
-        $client->request(
-
-            'GET',
-            '/search/'.$this->hash
-        );
-
-        $response = $client->getResponse();
-        $result   = json_decode($response->getContent(), true);
-
-        if (!empty($result)) {
-
-            // Rather costly test, so better skip if we already have data
-            $this->markTestSkipped();
-        }
 
         $client  = $this->createClient();
         $client->request(
@@ -183,6 +172,21 @@ class SearchTest extends WebTestCase {
 
         $this->assertArrayHasKey('hash', $data);
         $this->assertEquals($this->hash, $data['hash']);
+    }
+
+    public static function tearDownAfterClass() {
+
+        if (self::$skipTeardownAfter) {
+
+            return;
+        }
+
+        $client  = self::$_this_->createClient();
+        $client->request(
+
+            'GET',
+            '/search/delete/'.self::$_this_->hash
+        );
     }
 }
 

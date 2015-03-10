@@ -1,6 +1,6 @@
 <?php
 
-namespace Crawler\Service;
+namespace App\Service;
 
 use \Symfony\Component\HttpFoundation\Response;
 
