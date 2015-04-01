@@ -2,12 +2,32 @@
 
     "config": {
 
-        "vendor-dir": "app/sys/vendor",
-        "preferred-install": "dist"
+        "vendor-dir": "src/sys/vendor"
+    },
+    "autoload": {
 
+        "classmap": ["src/sys/lib/App"]
     },
     "require": {
 
-        "php": ">=5.4"
+        "php": ">=5.4",
+
+        "rmccue/requests": ">=1.0",
+        "google/apiclient": "~1.1",
+
+        "silex/silex": "~1.1",
+        "symfony/yaml": "2.5.*@dev",
+        "symfony/filesystem": "~2.3",
+        "symfony/finder": "~2.3",
+        "symfony/process": "~2.3",
+        "symfony/security": "~2.3",
+        "symfony/serializer": "~2.3",
+        "symfony/monolog-bridge": "~2.3",
+        "doctrine/dbal": ">=2.2.0,<2.4.0-dev"
+    },
+    "require-dev": {
+
+        "symfony/browser-kit": "~2.3",
+        "symfony/css-selector": "~2.3"
     }
 }

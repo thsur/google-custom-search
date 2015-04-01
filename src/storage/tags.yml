@@ -1,0 +1,15 @@
+# tags.yml
+#
+# This file gets overwritten by certain tasks, though you
+# should be safe to add and remove tags manually (but not,
+# for example, uncomment them - those would be gone).
+#
+main:
+    - add
+    - some
+    - main
+    - tags
+subsidiary:
+    - simplex
+    - com_plex
+    - xelp_moc_xelpmis

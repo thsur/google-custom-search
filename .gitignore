@@ -1,5 +1,9 @@
 
-app/_sys/vendor
+src/storage/config.yml
+
+src/sys/vendor
+src/public/node_modules
+src/public/app/bower_components
 
 *.tar.gz
 *.phar

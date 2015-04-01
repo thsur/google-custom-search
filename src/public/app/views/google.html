@@ -1,0 +1,213 @@
+
+<div x-ui-utils x-google-tabs ng-controller="Google" id="google_main">
+
+  <div role="tabpanel" class="tabpanel">
+
+    <!-- Nav tabs -->
+
+    <ul class="nav nav-tabs" role="tablist">
+      <li role="presentation" class="active">
+        <a href="javascript:void(0)"
+           data-target="#search"
+           aria-controls="search"
+           role="tab"
+           data-toggle="tab">Search</a>
+      </li>
+      <li role="presentation">
+        <a href="javascript:void(0)"
+           data-target="#items"
+           aria-controls="items"
+           role="tab"
+           ng-show="results.items.length"
+           data-toggle="tab">Results <span class="badge">{{results.items.length}}</span></a>
+      </li>
+      <li role="presentation">
+        <a href="javascript:void(0)"
+           data-target="#collected"
+           aria-controls="collected"
+           role="tab"
+           ng-show="collected.length"
+           data-toggle="tab">Collected <span class="badge">{{collected.length}}</span></a>
+      </li>
+      <li role="presentation">
+        <a href="javascript:void(0)"
+           data-target="#trash"
+           aria-controls="trash"
+           role="tab"
+           ng-show="trash.length"
+           data-toggle="tab">Trash <span class="badge">{{trash.length}}</span></a>
+      </li>
+    </ul>
+
+    <!-- Tab panes -->
+
+    <div class="tab-content">
+
+      <!-- Search -->
+
+      <div role="tabpanel" class="tab-pane active" id="search">
+        <div class="jumbotron">
+
+          <form x-form-utils name="google-search" class="form-horizontal">
+
+            <fieldset>
+              <div class="form-group">
+                <div class="col-sm-10">
+                  <input id="search" class="form-control input-lg" placeholder="Google search" autofocus ng-model="query.q">
+                </div>
+                <div class="col-sm-2">
+                  <input type="submit"
+                         class="btn btn-lg btn-primary search"
+                         value="Okay"
+                         x-search
+                         data-loading-text="..."
+                         ng-click="initSearch(switchTab, ['#items'])">
+                </div>
+              </div>
+
+              <div class="btn-group form-group" role="group" aria-label="Search Controls">
+                <div class="col-sm-12">
+                  <div class="btn-group" role="group">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="snippets_menu" data-toggle="dropdown" aria-expanded="true">
+                      Add a query snippet
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="snippets_menu">
+                      <li role="presentation">
+                        <a role="menuitem" tabindex="-1" href="javascript:void(0)" ng-click="addSnippet('site:'); focusField('#search')">
+                          site:
+                        </a>
+                      </li>
+                      <li role="presentation">
+                        <a role="menuitem" tabindex="-1" href="javascript:void(0)" ng-click="addSnippet('allintitle:'); focusField('#search')">
+                          allintitle:
+                        </a>
+                      </li>
+                      <li role="presentation">
+                        <a role="menuitem" tabindex="-1" href="javascript:void(0)" ng-click="addSnippet('filetype:'); focusField('#search')">
+                          filetype:
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                  <button type="button"
+                          class="btn btn-default"
+                          data-toggle="collapse"
+                          data-target="#saved_searches"
+                          aria-expanded="false"
+                          aria-controls="saved_searches">Load a saved search</button>
+                  </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="collapse form-group" id="saved_searches">
+              <div class="col-sm-12">
+                <div class="list-group">
+                  <span ng-repeat="query in queries" class="list-group-item">
+                    <a href="javascript:void(0)" ng-click="loadQuery(query, switchTab, ['#items'])">{{query.query}}</a>
+                    <button type="button" class="close" aria-label="Close" ng-click="deleteQuery(query)">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </fieldset>
+
+          </form>
+        </div>
+      </div>
+
+      <!-- Results -->
+
+      <div role="tabpanel" class="tab-pane results" ng-show="results.items.length" id="items">
+        <div class="page-header">
+          <h1><small>{{results.query}}</small></h1>
+        </div>
+
+        <div class="panel panel-default" ng-repeat="(key, item) in results.items">
+          <div class="panel-heading">
+            <h3 class="panel-title">{{item.title}}</h3>
+          </div>
+          <div class="panel-body">
+            <p>{{item.snippet}}</p>
+            <div><a ng-href="{{item.link}}">{{item.link}}</a></div>
+          </div>
+
+          <div class="panel-footer">
+            <button type="button" class="btn btn-sm btn-warning" ng-click="deleteQueryItem(key,item)">Trash</button>
+            <button type="button" class="btn btn-sm btn-primary" ng-click="collectQueryItem(key,item)">Collect</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Collected -->
+
+      <div role="tabpanel" class="tab-pane collected" id="collected">
+
+        <div class="panel panel-default" ng-repeat="(key, item) in collected">
+          <div class="panel-heading">
+            <h3 class="panel-title">{{item.title}}</h3>
+          </div>
+          <div class="panel-body">
+            <p>{{item.snippet}}</p>
+            <div><a ng-href="{{item.link}}">{{item.link}}</a></div>
+          </div>
+
+          <div class="panel-footer">
+            <div class="btn-group pull-left" data-toggle="buttons" role="group">
+              <label ng-repeat="tag in tags.main"
+                     ng-click="toggleTag(key, tag)"
+                     class="btn btn-default btn-sm"
+                     x-tags>
+                <input type="checkbox" autocomplete="off"> {{tag}}
+              </label>
+            </div>
+            <button type="button"
+                    class="btn btn-sm btn-warning"
+                    ng-click="removeCollectedItem(key,item)">
+              Reject
+            </button>
+            <button type="button"
+                    class="btn btn-sm btn-primary save"
+                    data-loading-text="Saving..."
+                    x-autosave>
+              Save all
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trash -->
+
+      <div role="tabpanel" class="tab-pane trash" id="trash">
+
+        <div class="panel panel-default" ng-repeat="(key, item) in trash">
+          <div class="panel-heading">
+            <h3 class="panel-title">{{item.title}}</h3>
+          </div>
+          <div class="panel-body">
+            <p>{{item.snippet}}</p>
+            <div><a ng-href="{{item.link}}">{{item.link}}</a></div>
+          </div>
+          <div class="panel-footer">
+            <button type="button" class="btn btn-sm btn-primary" ng-click="restoreQueryItem(key,item)">Restore</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script type="text/ng-template" id="confirm-delete.html">
+  <div class="modal-header">
+      <h3 class="modal-title">Remove a saved search</h3>
+  </div>
+  <div class="modal-body">
+      You are about to remove a saved search. This includes its results, all collected items, and its trash. Proceed?
+  </div>
+  <div class="modal-footer">
+      <button class="btn btn-danger" ng-click="$close()">OK</button>
+      <button class="btn btn-success" ng-click="$dismiss()">Cancel</button>
+  </div>
+</script>

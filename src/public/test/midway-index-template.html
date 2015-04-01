@@ -1,0 +1,50 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  </head>
+  <body>
+
+    <div class="container" ng-controller="App" ng-cloak>
+
+      <header class="header navbar navbar-default navbar-static-top navbar-inverse">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">thing</a>
+        </div>
+
+        <nav x-nav class="collapse navbar-collapse" role="navigation">
+          <ul class="nav navbar-nav">
+            <li ng-repeat="entry in nav" ng-class="{active: isActive(entry.url)}">
+              <a ng-href="#{{entry.url}}">{{entry.title}}</a>
+            </li>
+          </ul>
+        </nav>
+      </header>
+
+      <section class="main" ng-view ng-cloak></section>
+
+      <footer ng-controller="Footer">
+        <p class="copy">&copy; {{ date | date:'y' }} Your WoMan</p>
+      </footer>
+
+    </div>
+
+</body>
+</html>
