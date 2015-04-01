@@ -15,39 +15,25 @@ end
 
 namespace :install do
 
-  desc 'Setup directory structure.'
-  task :init_dirs do
-    sh 'mkdir --parents bin dist src/storage src/sys/test src/public'
+  desc 'Install app.'
+  task :install do
+
     sh 'chmod 775 src/storage'
+    sh 'chmod 744 src/public/app/connect.php';
+    sh 'mv src/storage/config.sample.yml src/storage/config.yml'
+
+    Rake::Task['install:composer'].invoke
+    Rake::Task['install:phpunit'].invoke
+    Rake::Task['update:composer'].invoke
+    Rake::Task['update:npm'].invoke
+    Rake::Task['update:bower'].invoke
+
+    sh 'php src/sys/main.php' # Init db
   end
 
   desc 'Install Composer.'
   task :composer do
     sh 'curl -sS https://getcomposer.org/installer | php'
-  end
-
-  desc 'Install Silex.'
-  task :silex do
-
-    # We need Angular's dir structure, so make sure it's created.
-
-    if Dir.exists?('src/public/app')
-      Rake::Task['install:angular'].invoke
-    end
-
-    Rake::Task['update:composer'].invoke
-
-    # Create an empty Silex bootstrap/app file.
-
-    sh 'touch src/public/app/connect.php';
-    sh 'chmod 744 src/public/app/connect.php';
-  end
-
-  desc 'Install Angular.'
-  task :angular do
-    cd('src/public') do
-      sh 'yo angular'
-    end
   end
 
   desc 'Install PHPUnit.'
@@ -66,9 +52,18 @@ namespace :update do
     sh 'composer.phar update --verbose'
   end
 
+  desc 'Update npm packages.'
+  task :npm do
+    cd('src/public') do
+      sh 'npm update'
+    end
+  end
+
   desc 'Update Bower packages.'
   task :bower do
-    sh 'bower update --verbose'
+    cd('src/public') do
+      sh 'bower update --verbose'
+    end
   end
 
   desc 'Update Ruby gems.'
@@ -99,6 +94,13 @@ namespace :db do
   task :dump do
     cd('src/storage') do
       sh 'sqlite3 queries.db ".dump queries" | grep -v "^CREATE" > db.dump.sql'
+    end
+  end
+
+  desc 'Load sample db data.'
+  task :import_sample do
+    cd('src/storage') do
+      sh 'cat db.dump.sql | sqlite3 queries.db'
     end
   end
 end
